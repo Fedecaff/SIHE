@@ -1,11 +1,12 @@
 import { Navigate, Outlet } from "react-router-dom";
 import type { UserRole } from "@/types/sihe";
+import { homePathForRole } from "@/lib/authSession";
 import { useAuth } from "@/app/providers";
 
 export function PublicOnly() {
   const { user, loading } = useAuth();
   if (loading) return <p className="page-center">Cargando…</p>;
-  if (user) return <Navigate to="/mapa" replace />;
+  if (user) return <Navigate to={homePathForRole(user.role)} replace />;
   return <Outlet />;
 }
 

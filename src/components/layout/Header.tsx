@@ -1,10 +1,16 @@
 import { Link, NavLink } from "react-router-dom";
 import { UserRole } from "@/types/sihe";
 import { useAuth } from "@/app/providers";
+import { NotificationBell } from "@/components/layout/NotificationBell";
 import { roleLabel } from "@/lib/roleLabel";
 
-export function Header() {
+type HeaderProps = {
+  pendingIncidentCount?: number;
+};
+
+export function Header({ pendingIncidentCount = 0 }: HeaderProps) {
   const { user, logout } = useAuth();
+  const isAdmin = user?.role === UserRole.Administrador;
 
   return (
     <header className="app-header">
@@ -24,7 +30,7 @@ export function Header() {
         <NavLink to="/listado" className={navClass}>
           Listado
         </NavLink>
-        {user?.role === UserRole.Administrador ? (
+        {isAdmin ? (
           <NavLink to="/admin" className={navClass}>
             Admin
           </NavLink>
@@ -32,6 +38,9 @@ export function Header() {
       </nav>
 
       <div className="app-header-user">
+        {isAdmin ? (
+          <NotificationBell pendingCount={pendingIncidentCount} />
+        ) : null}
         <span className="app-header-name">{user?.name}</span>
         {user ? (
           <span className={`app-header-role role-${user.role}`}>

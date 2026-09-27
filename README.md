@@ -7,7 +7,7 @@ Sistema Integral Hídrico de Emergencia — San Fernando del Valle de Catamarca.
 ## Arranque
 
 1. Copiá `.env.example` → `.env` (URL + anon key de Supabase).
-2. **Base de datos (Sprint 2, una sola vez):** en SQL Editor correr `supabase/01_esquema.sql` y luego `supabase/02_datos_demo.sql`. Ver `supabase/README.md`.
+2. **Base de datos:** en SQL Editor correr los scripts de `supabase/` en orden (`01` … `08`). Ver `supabase/README.md`.
 3. `npm install`
 4. `npm run dev` → http://localhost:5173/
 

@@ -1,12 +1,14 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/app/providers";
+import { homePathForRole } from "@/lib/authSession";
 
 export function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberSession, setRememberSession] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -15,11 +17,11 @@ export function LoginPage() {
     setError(null);
     setSubmitting(true);
     try {
-      await login(email, password);
-      navigate("/mapa", { replace: true });
+      const profile = await login(email, password, rememberSession);
+      navigate(homePathForRole(profile.role), { replace: true });
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "No se pudo iniciar sesión",
+        err instanceof Error ? err.message : "No se pudo iniciar sesión.",
       );
     } finally {
       setSubmitting(false);
@@ -56,7 +58,19 @@ export function LoginPage() {
               required
             />
           </label>
-          {error ? <p className="form-error" role="alert">{error}</p> : null}
+          <label className="field field-check">
+            <input
+              type="checkbox"
+              checked={rememberSession}
+              onChange={(e) => setRememberSession(e.target.checked)}
+            />
+            <span>Mantener sesión</span>
+          </label>
+          {error ? (
+            <p className="form-error" role="alert">
+              {error}
+            </p>
+          ) : null}
           <button className="btn-primary" type="submit" disabled={submitting}>
             {submitting ? "Ingresando…" : "Iniciar sesión"}
           </button>

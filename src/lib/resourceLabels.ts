@@ -38,3 +38,16 @@ export function statusColor(status: ResourceStatus): string {
       return "#666666";
   }
 }
+
+export function typeColor(type: ResourceType): string {
+  switch (type) {
+    case "hidrante":
+      return "#b91c1c";
+    case "espejo":
+      return "#0369a1";
+    case "tanque":
+      return "#6d28d9";
+    default:
+      return "#334155";
+  }
+}

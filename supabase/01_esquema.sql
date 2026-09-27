@@ -188,6 +188,8 @@ select
   r.accessibility,
   r.capacity,
   r.observations,
+  r.last_verified_at,
+  r.last_verified_by_id,
   ST_Y(r.location::geometry) as lat,
   ST_X(r.location::geometry) as lng
 from public.resources r;

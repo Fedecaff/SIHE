@@ -18,7 +18,11 @@ import {
 type AuthState = {
   user: AuthUser | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (
+    email: string,
+    password: string,
+    rememberSession?: boolean,
+  ) => Promise<AuthUser>;
   logout: () => Promise<void>;
 };
 
@@ -55,7 +59,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       void fetchOwnProfile(session.user.id)
         .then(setUser)
-        .catch(() => setUser(null));
+        .catch(async () => {
+          await supabase.auth.signOut();
+          setUser(null);
+        });
     });
 
     return () => {
@@ -64,10 +71,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const login = useCallback(async (email: string, password: string) => {
-    const profile = await loginWithPassword(email, password);
-    setUser(profile);
-  }, []);
+  const login = useCallback(
+    async (email: string, password: string, rememberSession = false) => {
+      const profile = await loginWithPassword(
+        email,
+        password,
+        rememberSession,
+      );
+      setUser(profile);
+      return profile;
+    },
+    [],
+  );
 
   const logout = useCallback(async () => {
     await logoutSession();
