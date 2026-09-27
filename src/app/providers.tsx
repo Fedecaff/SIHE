@@ -44,7 +44,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         const profile = await fetchOwnProfile(sessionUser.id);
         if (!cancelled) setUser(profile);
-      } catch {
+      } catch (err) {
+        console.error("Error al cargar perfil inicial:", err);
         await supabase.auth.signOut();
         if (!cancelled) setUser(null);
       } finally {
@@ -59,7 +60,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       void fetchOwnProfile(session.user.id)
         .then(setUser)
-        .catch(async () => {
+        .catch(async (err) => {
+          console.error("Error al cargar perfil en cambio de sesión:", err);
           await supabase.auth.signOut();
           setUser(null);
         });
