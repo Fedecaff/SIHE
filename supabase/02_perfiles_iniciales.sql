@@ -1,11 +1,12 @@
 -- =============================================================================
 -- SIHE — perfiles iniciales (admin + operador)
+-- Pegá los UUID de Authentication → Users. No commitees UUID reales.
 -- =============================================================================
 
 insert into public.profiles (id, email, name, institution, app_role, active)
 values
   (
-    '4a11d7c7-c9d2-4c2a-ba3d-ed0dbb68b40b',
+    '<UUID-ADMIN>',
     'admin@gmail.com',
     'Administrador SIHE',
     'Bomberos Catamarca',
@@ -13,7 +14,7 @@ values
     true
   ),
   (
-    '5ab77389-63bc-4759-9c6b-07a0f19c485d',
+    '<UUID-OPERADOR>',
     'operador@gmail.com',
     'Operador SIHE',
     'Bomberos Catamarca',

@@ -653,7 +653,7 @@ export async function createUserAccount(input: {
 
         profileError.message ||
 
-          "Usuario en Auth creado, pero fallÃ³ el perfil. RevisÃ¡ 04_permisos_operacion.sql",
+          "Usuario en Auth creado, pero falló el perfil. Revisá 09_seguridad_altas.sql",
 
       );
 

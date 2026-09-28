@@ -24,13 +24,15 @@ En el SQL Editor de Supabase, ejecutar **en orden**:
 7. `supabase/06_direcciones_hidrantes.sql` (opcional: solo si las direcciones están vacías)
 8. `supabase/07_operador_solo_incidencia.sql`
 9. `supabase/08_admin_alta_incendio.sql`
+10. `supabase/09_seguridad_altas.sql` **(obligatorio)** — el rol no se toma del `signUp`; los perfiles nuevos quedan inactivos hasta que un admin los active
 
 ### 1.2 Configurar Authentication
 
 En Supabase → Authentication → Providers → Email:
 
 - ✅ **Enable Email provider**
-- ✅ **Allow new users** (la app no tiene registro público, solo admin crea usuarios)
+- ✅ **Allow new users** (hace falta para que el admin cree cuentas desde `/admin/usuarios`; no hay registro público en la app)
+- El **rol lo asigna solo un administrador**. Nadie puede hacerse admin pasando `app_role` en el `signUp`: el trigger ignora esos metadatos y deja el perfil como operador inactivo.
 - ❌ **Confirm email** desactivado (o los usuarios no podrán entrar hasta confirmar)
 
 ### 1.3 Verificar Storage
@@ -104,7 +106,7 @@ Vercel detecta automáticamente Vite, pero verificar:
    - Redesplegar después de agregar variables
 
 2. **Scripts SQL no ejecutados**
-   - Verificar en Supabase SQL Editor que se ejecutaron los 8 scripts en orden
+   - Verificar en Supabase SQL Editor que se ejecutaron los 9 scripts en orden
    - El script `03_datos_demo.sql` inserta 850 hidrantes
 
 3. **RLS (Row Level Security) sin grants**
@@ -178,11 +180,12 @@ VALUES (
 
 ### Crear usuarios nuevos
 
-Como admin, usar la interfaz `/admin/usuarios` → "Crear usuario"
+Como admin, usar la interfaz `/admin/usuarios` → "Crear usuario". El rol **solo** lo asigna un administrador (después del alta, con la sesión de admin restaurada). Un `signUp` directo deja el perfil como operador inactivo.
 
 O manualmente en Supabase:
 1. Authentication → Users → Add user
-2. El trigger `handle_new_user()` crea automáticamente el perfil
+2. El trigger `handle_new_user()` crea el perfil como **operador inactivo** (ignora `app_role` de los metadatos)
+3. Un administrador activa la cuenta y asigna el rol en `/admin/usuarios` o en `profiles`
 
 ### Backups
 
@@ -199,4 +202,4 @@ Si después de seguir esta guía persisten problemas:
 1. Revisar los logs de la consola del navegador
 2. Verificar que todas las tablas existan: `SELECT tablename FROM pg_tables WHERE schemaname = 'public';`
 3. Verificar que todas las vistas existan: `SELECT table_name FROM information_schema.views WHERE table_schema = 'public';`
-4. Verificar grants: todos los scripts SQL del 01 al 08 deben haberse ejecutado sin errores
+4. Verificar grants: todos los scripts SQL del 01 al 09 deben haberse ejecutado sin errores

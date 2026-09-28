@@ -1,7 +1,6 @@
 # Mapa del proyecto SIHE
 
-Guía rápida: **qué hay en cada carpeta**.  
-Proyecto: `D:\PROYECTOS\SIHE`
+Guía rápida: **qué hay en cada carpeta**.
 
 ---
 

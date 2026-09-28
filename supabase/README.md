@@ -28,6 +28,8 @@
 
 9. **`08_admin_alta_incendio.sql`** — Admin registra incendios para mapa de calor
 
+10. **`09_seguridad_altas.sql`** — El rol no se toma del signUp: perfil nuevo = operador inactivo; lectura solo para perfiles activos
+
 ## Verificación
 
 Después de ejecutar todos los scripts, verificar:
@@ -50,5 +52,6 @@ SELECT COUNT(*) FROM fire_events_map;
 
 Para crear usuarios desde `/admin/usuarios`:
 
-- En Supabase → Authentication → Providers → Email: **Allow new users** activado (la app no tiene registro público).
+- En Supabase → Authentication → Providers → Email: **Allow new users** activado (la app no tiene registro público; el alta la hace un administrador).
+- El rol **solo** lo asigna un administrador (desde `/admin/usuarios` o actualizando `profiles`). `signUp` no puede elegir `app_role`: el trigger crea operador inactivo.
 - Confirmación de email: desactivada en el MVP local, o el usuario no podrá entrar hasta confirmar.
