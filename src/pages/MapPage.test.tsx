@@ -125,5 +125,37 @@ describe("MapPage", () => {
     fireEvent.click(screen.getByRole("button", { name: "Filtros" }));
     expect(screen.getByRole("button", { name: "← Volver a la ruta" })).toBeTruthy();
     expect(closeRoute).not.toHaveBeenCalled();
+    expect(screen.queryByRole("button", { name: "Mostrar panel" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Ocultar panel" })).toBeNull();
+  });
+
+  it("en escritorio el botón del panel no queda dentro del buscador", () => {
+    Object.defineProperty(window, "matchMedia", {
+      writable: true,
+      value: (query: string) => ({
+        matches: query.includes("1024") || query.includes("1280"),
+        media: query,
+        addEventListener: () => undefined,
+        removeEventListener: () => undefined,
+      }),
+    });
+    render(
+      <MemoryRouter>
+        <MapPage />
+      </MemoryRouter>,
+    );
+
+    const hide = screen.getByRole("button", { name: "Ocultar panel" });
+    const dock = screen.getByRole("complementary", { name: "Herramientas del mapa" });
+    expect(dock.contains(hide)).toBe(true);
+    expect(screen.getByRole("search").contains(hide)).toBe(false);
+    expect(screen.getByPlaceholderText("Dirección o intersección")).toBeTruthy();
+
+    fireEvent.click(hide);
+    const show = screen.getByRole("button", { name: "Mostrar panel" });
+    expect(show.parentElement?.classList.contains("map-search-row")).toBe(true);
+    expect(show.parentElement?.contains(screen.getByRole("search"))).toBe(true);
+    expect(screen.getByRole("search").contains(show)).toBe(false);
+    expect(screen.queryByRole("complementary", { name: "Herramientas del mapa" })).toBeNull();
   });
 });

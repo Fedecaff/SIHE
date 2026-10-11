@@ -424,6 +424,20 @@ export function MapPage() {
   }
 
   const detail = renderDetail();
+  const searchBar = (
+    <MapSearchBar
+      query={addressQuery}
+      searching={addressSearching}
+      resultCount={items.length}
+      loading={loading}
+      onQueryChange={setAddressQuery}
+      onSearch={() => void handleAddressSearch()}
+      onClear={() => {
+        setAddressQuery("");
+        setAddressTarget(null);
+      }}
+    />
+  );
 
   return (
     <div
@@ -437,6 +451,10 @@ export function MapPage() {
       <div className="map-stage">
         {chrome === "desktop" && desktopOpen ? (
           <aside className="map-dock map-dock-left" aria-label="Herramientas del mapa">
+            <div className="map-dock-head">
+              <PanelToggle open onClick={() => setDesktopOpen(false)} />
+            </div>
+            <div className="map-dock-body">
             <div className="map-dock-tabs">
               {(["filtros", "capas", "leyenda"] as const).map((tab) => (
                 <button
@@ -476,21 +494,18 @@ export function MapPage() {
             ) : (
               layersPanel
             )}
+            </div>
           </aside>
         ) : null}
         <div className="map-body">
-          <MapSearchBar
-            query={addressQuery}
-            searching={addressSearching}
-            resultCount={items.length}
-            loading={loading}
-            onQueryChange={setAddressQuery}
-            onSearch={() => void handleAddressSearch()}
-            onClear={() => {
-              setAddressQuery("");
-              setAddressTarget(null);
-            }}
-          />
+          {chrome === "desktop" && !desktopOpen ? (
+            <div className="map-search-row">
+              <PanelToggle open={false} onClick={() => setDesktopOpen(true)} />
+              {searchBar}
+            </div>
+          ) : (
+            searchBar
+          )}
           <MapToasts
             items={toasts}
             onDismiss={(item) => setDismissed((current) => [...current, item.text])}
@@ -548,16 +563,6 @@ export function MapPage() {
             onZoomIn={() => setZoomInToken((n) => n + 1)}
             onZoomOut={() => setZoomOutToken((n) => n + 1)}
           />
-          {chrome === "desktop" ? (
-            <button
-              type="button"
-              className="map-dock-toggle"
-              aria-expanded={desktopOpen}
-              onClick={() => setDesktopOpen((open) => !open)}
-            >
-              {desktopOpen ? "Ocultar panel" : "Mostrar panel"}
-            </button>
-          ) : null}
         </div>
         {chrome === "desktop" && detail ? (
           <aside className="map-dock map-dock-right" aria-label={destination ? "Cómo llegar" : sheetTitle}>
@@ -581,5 +586,43 @@ export function MapPage() {
         </MapBottomSheet>
       ) : null}
     </div>
+  );
+}
+
+function PanelToggle({ open, onClick }: { open: boolean; onClick: () => void }) {
+  const label = open ? "Ocultar panel" : "Mostrar panel";
+  return (
+    <button
+      type="button"
+      className="map-dock-toggle"
+      aria-expanded={open}
+      aria-label={label}
+      title={label}
+      onClick={onClick}
+    >
+      {open ? <ClosePanelIcon /> : <OpenPanelIcon />}
+    </button>
+  );
+}
+
+function OpenPanelIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="map-svg">
+      <path
+        d="M4 5h16v14H4z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      <path d="M9 5v14" stroke="currentColor" strokeWidth="2" />
+    </svg>
+  );
+}
+
+function ClosePanelIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="map-svg">
+      <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" />
+    </svg>
   );
 }
