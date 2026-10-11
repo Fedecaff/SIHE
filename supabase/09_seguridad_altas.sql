@@ -55,6 +55,7 @@ as $$
 $$;
 
 revoke all on function public.is_active_user() from public;
+revoke execute on function public.is_active_user() from anon;
 grant execute on function public.is_active_user() to authenticated;
 
 drop policy if exists "resources_select_authenticated" on public.resources;

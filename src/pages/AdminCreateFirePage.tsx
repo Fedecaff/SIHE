@@ -28,7 +28,8 @@ function ClickPicker({
 }) {
   useMapEvents({
     click(e) {
-      onPick(e.latlng.lat, e.latlng.lng);
+      const p = e.latlng.wrap();
+      onPick(p.lat, p.lng);
     },
   });
   return null;
@@ -62,6 +63,10 @@ export function AdminCreateFirePage() {
     const when = new Date(occurredAt);
     if (Number.isNaN(when.getTime())) {
       setError("Revisá la fecha y la hora.");
+      return;
+    }
+    if (when > new Date()) {
+      setError("La fecha y hora no pueden ser futuras");
       return;
     }
 
@@ -120,6 +125,7 @@ export function AdminCreateFirePage() {
             <input
               type="datetime-local"
               value={occurredAt}
+              max={toLocalInputValue(new Date())}
               onChange={(e) => setOccurredAt(e.target.value)}
               required
             />
@@ -135,6 +141,7 @@ export function AdminCreateFirePage() {
             maxLength={500}
             placeholder="Barrio, causa, o lo que sirva para el parte"
           />
+          <span className="form-hint">{description.length}/500</span>
         </label>
 
         <p className="form-hint">
@@ -150,6 +157,11 @@ export function AdminCreateFirePage() {
             zoom={MAP_DEFAULT_ZOOM}
             className="create-map-canvas"
             scrollWheelZoom
+            worldCopyJump={false}
+            maxBounds={[
+              [-28.7, -66.05],
+              [-28.25, -65.5],
+            ]}
           >
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'

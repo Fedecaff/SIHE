@@ -30,10 +30,18 @@ begin
     raise exception 'Fecha y hora obligatorias';
   end if;
 
+  if p_occurred_at > now() + interval '5 minutes' then
+    raise exception 'La fecha y hora no pueden ser futuras';
+  end if;
+
   if p_lat is null or p_lng is null
      or p_lat < -90 or p_lat > 90
      or p_lng < -180 or p_lng > 180 then
     raise exception 'Ubicación inválida';
+  end if;
+
+  if p_description is not null and char_length(trim(p_description)) > 500 then
+    raise exception 'La nota no puede superar 500 caracteres';
   end if;
 
   insert into public.fire_events (
@@ -54,6 +62,9 @@ $$;
 revoke all on function public.admin_create_fire_event(
   text, timestamptz, double precision, double precision, text
 ) from public;
+revoke execute on function public.admin_create_fire_event(
+  text, timestamptz, double precision, double precision, text
+) from anon;
 grant execute on function public.admin_create_fire_event(
   text, timestamptz, double precision, double precision, text
 ) to authenticated;

@@ -19,16 +19,20 @@
 5. **`04_permisos_operacion.sql`** — RLS de escritura (ficha, incidencias, usuarios, fotos)
    - Recrea la vista `resources_map` con todas las columnas necesarias
 
-6. **`05_admin_incendios.sql`** — Admin puede aprobar incidencias, crear recursos, vista incendios
+6. **`05_admin_incendios.sql`** — Admin puede aprobar incidencias, crear recursos, vista incendios. No borra ni carga eventos.
+
+6b. **`05b_demo_incendios.sql`** — **Opcional y solo en una base de prueba.** Incendios ficticios. No borra filas: si ya hay algún evento, no inserta nada. No lo corras sobre incendios reales.
 
 7. **`06_direcciones_hidrantes.sql`** — Calles de los 850 hidrantes
    - Solo ejecutar si los hidrantes todavía dicen "Hidrante N - Catamarca"
 
 8. **`07_operador_solo_incidencia.sql`** — El operador no puede editar fichas oficiales
 
-9. **`08_admin_alta_incendio.sql`** — Admin registra incendios para mapa de calor
+9. **`08_admin_alta_incendio.sql`** — Admin registra incendios. Valida fecha no futura y nota de hasta 500 caracteres. `anon` no puede ejecutar la función.
 
-10. **`09_seguridad_altas.sql`** — El rol no se toma del signUp: perfil nuevo = operador inactivo; lectura solo para perfiles activos
+10. **`09_seguridad_altas.sql`** — El rol no se toma del signUp: perfil nuevo = operador inactivo; lectura solo para perfiles activos. `anon` no puede ejecutar `is_active_user`.
+
+11. **`10_auditoria_incendios.sql`** — Columna `fire_events.created_by` y el alta guarda `auth.uid()`. No cambia la vista `fire_events_map`. Si se vuelve a correr el `08`, hay que correr el `10` otra vez.
 
 ## Verificación
 
@@ -44,8 +48,15 @@ SELECT email, app_role FROM profiles;
 -- La vista debe tener todas las columnas
 SELECT * FROM resources_map LIMIT 1;
 
--- La vista de incendios debe tener eventos demo
+-- Eventos de incendio (0 si no corriste 05b; los reales no se borran)
 SELECT COUNT(*) FROM fire_events_map;
+
+-- Auditoría del alta (después del 10)
+SELECT column_name
+FROM information_schema.columns
+WHERE table_schema = 'public'
+  AND table_name = 'fire_events'
+  AND column_name = 'created_by';
 ```
 
 ## Auth (panel admin)
