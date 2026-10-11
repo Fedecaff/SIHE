@@ -1,12 +1,29 @@
 :root {
-  --color-primary: #2c3e50;
-  --color-accent: #e74c3c;
+  --color-primary: #1e3a4c;
+  --color-accent: #b42318;
   --color-bg: #f0f0f0;
   --color-surface: #ffffff;
-  --color-border: #cccccc;
-  --color-text: #333333;
-  --color-muted: #666666;
+  --color-border: #6b7280;
+  --color-text: #1a1a1a;
+  --color-muted: #3f3f46;
   --color-warning-bg: #fff3cd;
   --radius: 6px;
   --font: system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --header-h: 48px;
+  --app-nav-h: 48px;
+  --touch-min: 44px;
+  --btn-map: 48px;
+  --map-gap: 8px;
+  --panel-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
+
+  /* .map-canvas crea un contexto de apilamiento (z-index distinto de auto).
+     Los panes (200–700) y controles (800–1000) de Leaflet viven adentro
+     y no pueden tapar la sheet ni los toasts. */
+  --z-map: 0;
+  --z-map-controls: 10;
+  --z-map-sheet: 20;
+  --z-map-toast: 30;
+  --z-app-nav: 40;
+  --z-modal: 100;
 }

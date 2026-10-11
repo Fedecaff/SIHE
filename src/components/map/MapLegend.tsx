@@ -10,6 +10,8 @@ const STATUSES: ResourceStatus[] = [
 ];
 
 type Props = {
+  embedded?: boolean;
+  typeFilter?: "" | "hidrante" | "espejo" | "tanque" | "ninguno";
   showFire?: boolean;
   showModis?: boolean;
   showViirs?: boolean;
@@ -20,6 +22,8 @@ type Props = {
 };
 
 export function MapLegend({
+  embedded = false,
+  typeFilter = "",
   showFire = false,
   showModis = false,
   showViirs = false,
@@ -29,11 +33,17 @@ export function MapLegend({
   firmsLabel,
 }: Props) {
   const showSatellite = showModis || showViirs || showWms || showFirms;
+  const types =
+    typeFilter === "ninguno"
+      ? []
+      : typeFilter === ""
+        ? TYPES
+        : TYPES.filter((type) => type === typeFilter);
   return (
-    <aside className="map-legend" aria-label="Leyenda">
+    <aside className={embedded ? "map-legend is-embedded" : "map-legend"} aria-label="Leyenda">
       <h2>Tipo</h2>
       <ul>
-        {TYPES.map((type) => (
+        {types.map((type) => (
           <li key={type}>
             <span
               className="map-legend-icon"

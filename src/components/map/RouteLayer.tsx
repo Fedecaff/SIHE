@@ -26,14 +26,28 @@ function destinationCaption(target: RouteTarget): string {
   return target.label;
 }
 
-function FitRoute({ points }: { points: LatLng[] }) {
+function FitRoute({
+  points,
+  padding,
+}: {
+  points: LatLng[];
+  padding: { top: number; right: number; bottom: number; left: number };
+}) {
   const map = useMap();
+  const top = padding.top;
+  const right = padding.right;
+  const bottom = padding.bottom;
+  const left = padding.left;
 
   useEffect(() => {
     if (points.length < 2) return;
     const bounds = L.latLngBounds(points.map((p) => [p.lat, p.lng]));
-    map.fitBounds(bounds, { padding: [48, 48], maxZoom: 16 });
-  }, [map, points]);
+    map.fitBounds(bounds, {
+      paddingTopLeft: [left, top],
+      paddingBottomRight: [right, bottom],
+      maxZoom: 16,
+    });
+  }, [map, points, top, right, bottom, left]);
 
   return null;
 }
@@ -60,6 +74,7 @@ type Props = {
   destination: RouteTarget | null;
   pickingOrigin: boolean;
   onPickOrigin: (point: LatLng) => void;
+  viewPadding?: { top: number; right: number; bottom: number; left: number };
 };
 
 export function RouteLayer({
@@ -68,6 +83,7 @@ export function RouteLayer({
   destination,
   pickingOrigin,
   onPickOrigin,
+  viewPadding = { top: 48, right: 48, bottom: 48, left: 48 },
 }: Props) {
   return (
     <>
@@ -78,7 +94,7 @@ export function RouteLayer({
             positions={geometry.map((p) => [p.lat, p.lng])}
             pathOptions={{ color: "#1d4ed8", weight: 5, opacity: 0.9 }}
           />
-          <FitRoute points={geometry} />
+          <FitRoute points={geometry} padding={viewPadding} />
         </>
       ) : null}
       {origin ? (

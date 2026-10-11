@@ -36,8 +36,6 @@ import { BaseLayers } from "@/components/map/BaseLayers";
 import { FireLayers } from "@/components/map/FireLayers";
 import type { FirmsHotspot } from "@/lib/firmsHotspots";
 
-import { statusLabel, typeLabel } from "@/lib/resourceLabels";
-
 import type { FireEventMapItem } from "@/services/fires";
 
 import { fireTypeLabel } from "@/services/fires";
@@ -113,6 +111,14 @@ type Props = {
   onRouteToAddress?: () => void;
 
   onRouteToResource?: (item: ResourceMapItem) => void;
+
+  onMapClick?: () => void;
+
+  zoomInToken?: number;
+
+  zoomOutToken?: number;
+
+  viewPadding?: { top: number; right: number; bottom: number; left: number };
 
   baseLayer?: string;
 
@@ -256,6 +262,8 @@ function FocusControl({
 
   focusToken = 0,
 
+  padding,
+
 }: {
 
   items: ResourceMapItem[];
@@ -264,11 +272,15 @@ function FocusControl({
 
   focusToken?: number;
 
+  padding: ViewPadding;
+
 }) {
 
   const map = useMap();
-
-
+  const top = padding.top;
+  const right = padding.right;
+  const bottom = padding.bottom;
+  const left = padding.left;
 
   useEffect(() => {
 
@@ -280,7 +292,12 @@ function FocusControl({
 
     map.setView([item.lat, item.lng], 17);
 
-  }, [focusId, focusToken, items, map]);
+    map.panInside([item.lat, item.lng], {
+      paddingTopLeft: [left, top],
+      paddingBottomRight: [right, bottom],
+    });
+
+  }, [focusId, focusToken, items, map, top, right, bottom, left]);
 
 
 
@@ -290,11 +307,19 @@ function FocusControl({
 
 
 
-function AddressFlyControl({ target }: { target?: FlyToTarget | null }) {
+function AddressFlyControl({
+  target,
+  padding,
+}: {
+  target?: FlyToTarget | null;
+  padding: ViewPadding;
+}) {
 
   const map = useMap();
-
-
+  const top = padding.top;
+  const right = padding.right;
+  const bottom = padding.bottom;
+  const left = padding.left;
 
   useEffect(() => {
 
@@ -302,7 +327,12 @@ function AddressFlyControl({ target }: { target?: FlyToTarget | null }) {
 
     map.setView([target.lat, target.lng], 17);
 
-  }, [target, map]);
+    map.panInside([target.lat, target.lng], {
+      paddingTopLeft: [left, top],
+      paddingBottomRight: [right, bottom],
+    });
+
+  }, [target, map, top, right, bottom, left]);
 
 
 
@@ -392,10 +422,6 @@ export function MapView({
 
   addressLabel,
 
-  onRouteToAddress,
-
-  onRouteToResource,
-
   baseLayer = "Mapa (OSM)",
 
   overlays = [],
@@ -411,6 +437,14 @@ export function MapView({
   onOverlayChange,
 
   onTileError,
+
+  onMapClick,
+
+  zoomInToken = 0,
+
+  zoomOutToken = 0,
+
+  viewPadding = { top: 72, right: 80, bottom: 16, left: 16 },
 
 }: Props) {
 
@@ -429,6 +463,8 @@ export function MapView({
       className={pickingOrigin ? "map-canvas is-picking-origin" : "map-canvas"}
 
       scrollWheelZoom
+
+      zoomControl={false}
 
     >
 
@@ -457,6 +493,10 @@ export function MapView({
         onNarrow={setLayersCollapsed}
       />
 
+      <ZoomBridge zoomInToken={zoomInToken} zoomOutToken={zoomOutToken} />
+
+      <MapClick onMapClick={onMapClick} />
+
       <LocateControl
 
         token={locateToken}
@@ -469,9 +509,14 @@ export function MapView({
 
       <HomeControl token={homeToken} />
 
-      <FocusControl items={items} focusId={focusId} focusToken={focusToken} />
+      <FocusControl
+        items={items}
+        focusId={focusId}
+        focusToken={focusToken}
+        padding={viewPadding}
+      />
 
-      <AddressFlyControl target={addressTarget} />
+      <AddressFlyControl target={addressTarget} padding={viewPadding} />
 
       <FireFocusControl fires={fireEvents} focusFireId={focusFireId} />
 
@@ -486,6 +531,8 @@ export function MapView({
         pickingOrigin={pickingOrigin}
 
         onPickOrigin={onPickOrigin ?? (() => undefined)}
+
+        viewPadding={viewPadding}
 
       />
 
@@ -599,18 +646,6 @@ export function MapView({
 
           <Popup>
             <strong>{addressLabel || "Dirección buscada"}</strong>
-            {onRouteToAddress ? (
-              <>
-                <br />
-                <button
-                  type="button"
-                  className="map-popup-link map-popup-button"
-                  onClick={onRouteToAddress}
-                >
-                  Cómo llegar
-                </button>
-              </>
-            ) : null}
           </Popup>
 
         </Marker>
@@ -628,37 +663,43 @@ export function MapView({
           eventHandlers={{
             click: () => onSelectResource?.(item),
           }}
-        >
-          <Popup>
-            <strong>{item.name}</strong>
-            <br />
-            {typeLabel(item.type)} · {statusLabel(item.status)}
-            <br />
-            <span className="map-popup-address">{item.address}</span>
-            <br />
-            <Link to={`/recursos/${item.id}`} className="map-popup-link">
-              Ver ficha
-            </Link>
-            {onRouteToResource ? (
-              <>
-                <br />
-                <button
-                  type="button"
-                  className="map-popup-link map-popup-button"
-                  onClick={() => onRouteToResource(item)}
-                >
-                  Cómo llegar
-                </button>
-              </>
-            ) : null}
-          </Popup>
-        </Marker>
+        />
       ))}
 
     </MapContainer>
 
   );
 
+}
+
+type ViewPadding = { top: number; right: number; bottom: number; left: number };
+
+function ZoomBridge({
+  zoomInToken,
+  zoomOutToken,
+}: {
+  zoomInToken: number;
+  zoomOutToken: number;
+}) {
+  const map = useMap();
+  useEffect(() => {
+    if (zoomInToken === 0) return;
+    map.zoomIn();
+  }, [zoomInToken, map]);
+  useEffect(() => {
+    if (zoomOutToken === 0) return;
+    map.zoomOut();
+  }, [zoomOutToken, map]);
+  return null;
+}
+
+function MapClick({ onMapClick }: { onMapClick?: () => void }) {
+  useMapEvents({
+    click() {
+      onMapClick?.();
+    },
+  });
+  return null;
 }
 
 function MapPanes() {
