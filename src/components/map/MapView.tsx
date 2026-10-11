@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -13,8 +13,6 @@ import {
   Marker,
 
   Popup,
-
-  LayersControl,
 
   useMap,
 
@@ -32,8 +30,7 @@ import { getBrowserLocation } from "@/lib/userLocation";
 import type { LatLng } from "@/lib/userLocation";
 import type { RouteTarget } from "@/services/routing";
 import { RouteLayer } from "@/components/map/RouteLayer";
-import { BaseLayers } from "@/components/map/BaseLayers";
-import { FireLayers } from "@/components/map/FireLayers";
+import { ControlledMapLayers } from "@/components/map/ControlledMapLayers";
 import type { FirmsHotspot } from "@/lib/firmsHotspots";
 
 import type { FireEventMapItem } from "@/services/fires";
@@ -129,10 +126,6 @@ type Props = {
   satelliteOpacity?: number;
 
   firmsHotspots?: FirmsHotspot[];
-
-  onBaseLayerChange?: (name: string) => void;
-
-  onOverlayChange?: (name: string, enabled: boolean) => void;
 
   onTileError?: (name: string) => void;
 
@@ -432,10 +425,6 @@ export function MapView({
 
   firmsHotspots = [],
 
-  onBaseLayerChange,
-
-  onOverlayChange,
-
   onTileError,
 
   onMapClick,
@@ -447,10 +436,6 @@ export function MapView({
   viewPadding = { top: 72, right: 80, bottom: 16, left: 16 },
 
 }: Props) {
-
-  const [layersCollapsed, setLayersCollapsed] = useState(() =>
-    window.matchMedia("(max-width: 767px)").matches,
-  );
 
   return (
 
@@ -470,27 +455,13 @@ export function MapView({
 
       <MapPanes />
 
-      <LayersControl position="topright" collapsed={layersCollapsed}>
-
-        <BaseLayers
-          activeName={baseLayer}
-          onTileError={onTileError ?? (() => undefined)}
-        />
-
-        <FireLayers
-          activeOverlays={overlays}
-          date={satelliteDate}
-          opacity={satelliteOpacity}
-          hotspots={firmsHotspots}
-          onTileError={onTileError ?? (() => undefined)}
-        />
-
-      </LayersControl>
-
-      <LayerSync
-        onBase={onBaseLayerChange}
-        onOverlay={onOverlayChange}
-        onNarrow={setLayersCollapsed}
+      <ControlledMapLayers
+        baseLayer={baseLayer}
+        overlays={overlays}
+        date={satelliteDate}
+        opacity={satelliteOpacity}
+        hotspots={firmsHotspots}
+        onTileError={onTileError ?? (() => undefined)}
       />
 
       <ZoomBridge zoomInToken={zoomInToken} zoomOutToken={zoomOutToken} />
@@ -717,35 +688,5 @@ function MapPanes() {
   return null;
 }
 
-function LayerSync({
-  onBase,
-  onOverlay,
-  onNarrow,
-}: {
-  onBase?: (name: string) => void;
-  onOverlay?: (name: string, enabled: boolean) => void;
-  onNarrow: (value: boolean) => void;
-}) {
-  useMapEvents({
-    baselayerchange(event) {
-      onBase?.(event.name);
-    },
-    overlayadd(event) {
-      onOverlay?.(event.name, true);
-    },
-    overlayremove(event) {
-      onOverlay?.(event.name, false);
-    },
-  });
-
-  useEffect(() => {
-    const query = window.matchMedia("(max-width: 767px)");
-    const update = () => onNarrow(query.matches);
-    query.addEventListener("change", update);
-    return () => query.removeEventListener("change", update);
-  }, [onNarrow]);
-
-  return null;
-}
 
 

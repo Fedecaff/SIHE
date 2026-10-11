@@ -1464,7 +1464,18 @@ a {
 .map-chip.is-on { background: var(--color-primary); color: #fff; }
 .map-chips { display: flex; flex-wrap: wrap; gap: var(--map-gap); }
 .map-chip-set { border: 0; margin: 8px 0; padding: 0; }
-.map-chip-set legend { font-weight: 700; font-size: 14px; }
+.map-chip-set legend { font-weight: 700; font-size: 16px; }
+.map-layer-option {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  min-height: var(--touch-min);
+  margin: 6px 0;
+  font-size: 14px;
+}
+.map-layer-option small { display: block; color: var(--color-muted); }
+.map-advanced { margin-top: 8px; font-size: 14px; }
+.map-sources { font-size: 14px; }
 .map-panel-body { font-size: 14px; }
 .map-dock {
   width: 340px;

@@ -5,6 +5,7 @@ import type { ResourceMapItem } from "@/types/sihe";
 import { MapActionRail } from "@/components/map/MapActionRail";
 import { MapBottomSheet } from "@/components/map/MapBottomSheet";
 import { MapFiltersPanel } from "@/components/map/MapFiltersPanel";
+import { MapLayersPanel } from "@/components/map/MapLayersPanel";
 import { MapLegend } from "@/components/map/MapLegend";
 import { MapResourceCard } from "@/components/map/MapResourceCard";
 import { MapSearchBar } from "@/components/map/MapSearchBar";
@@ -221,6 +222,33 @@ export function MapPage() {
                   ? "Cómo llegar"
                   : "";
 
+  const layersPanel = (
+    <MapLayersPanel
+      baseLayer={satellite.baseLayer}
+      overlays={satellite.overlays}
+      date={satellite.date}
+      windowMode={satellite.windowMode}
+      source={satellite.source}
+      confidence={satellite.confidence}
+      minFrp={satellite.minFrp}
+      opacity={satellite.opacity}
+      showFireHeat={showFireHeat}
+      showFirePoints={showFirePoints}
+      firePeriod={firePeriod}
+      onBase={satellite.changeBase}
+      onOverlay={satellite.changeOverlay}
+      onDate={satellite.setDate}
+      onWindow={satellite.setWindowMode}
+      onSource={satellite.setSource}
+      onConfidence={satellite.setConfidence}
+      onMinFrp={satellite.setMinFrp}
+      onOpacity={satellite.setOpacity}
+      onHeat={setShowFireHeat}
+      onPoints={setShowFirePoints}
+      onPeriod={setFirePeriod}
+    />
+  );
+
   const sheetBody = renderSheetBody();
   const showSheet = chrome !== "desktop" && view.kind !== null && sheetBody;
 
@@ -240,43 +268,7 @@ export function MapPage() {
       );
     }
     if (view.kind === "capas") {
-      return (
-        <div className="map-panel-body">
-          <p className="muted">
-            Las capas del mapa se eligen en el control de arriba a la derecha.
-          </p>
-          <fieldset className="map-chip-set">
-            <legend>Incendios registrados</legend>
-            <label className="map-chip">
-              <input
-                type="checkbox"
-                checked={showFireHeat}
-                onChange={(event) => setShowFireHeat(event.target.checked)}
-              />
-              Calor
-            </label>
-            <label className="map-chip">
-              <input
-                type="checkbox"
-                checked={showFirePoints}
-                onChange={(event) => setShowFirePoints(event.target.checked)}
-              />
-              Puntos
-            </label>
-            <label>
-              Período
-              <select
-                value={firePeriod}
-                onChange={(event) => setFirePeriod(event.target.value as FirePeriod)}
-              >
-                <option value="12m">12 meses</option>
-                <option value="5y">5 años</option>
-                <option value="all">Todo</option>
-              </select>
-            </label>
-          </fieldset>
-        </div>
-      );
+      return layersPanel;
     }
     if (view.kind === "leyenda") {
       return (
@@ -464,7 +456,7 @@ export function MapPage() {
                 firmsLabel={satellite.firmsLabel}
               />
             ) : (
-              <p className="muted">Control de capas del mapa, arriba a la derecha.</p>
+              layersPanel
             )}
           </aside>
         ) : null}
@@ -517,8 +509,6 @@ export function MapPage() {
             satelliteDate={satellite.date}
             satelliteOpacity={satellite.opacity}
             firmsHotspots={satellite.hotspots}
-            onBaseLayerChange={satellite.changeBase}
-            onOverlayChange={satellite.changeOverlay}
             onTileError={satellite.reportTileError}
           />
           <MapActionRail
