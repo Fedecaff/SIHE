@@ -54,7 +54,10 @@ En Vercel → Project Settings → Environment Variables, agregar:
 ```
 VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
 VITE_SUPABASE_ANON_KEY=tu-clave-anon-publica
+VITE_ROUTING_BASE_URL=https://router.project-osrm.org
 ```
+
+`VITE_ROUTING_BASE_URL` es opcional. Si no se define, se usa el servidor público de OSRM (solo demo).
 
 **Dónde encontrar estos valores:**
 - Supabase → Project Settings → API

@@ -9,7 +9,11 @@ import { MapLegend } from "@/components/map/MapLegend";
 
 import { MapView } from "@/components/map/MapView";
 
+import { RoutePanel } from "@/components/map/RoutePanel";
+
 import { useResourceFilters } from "@/hooks/useResourceFilters";
+
+import { useRoute } from "@/hooks/useRoute";
 
 import { formatDateTime } from "@/lib/incidentLabels";
 
@@ -34,6 +38,14 @@ import { fetchResourcesMap } from "@/services/resources";
 export function MapPage() {
   const { user } = useAuth();
   const { filters, patchFilters, clearFilters } = useResourceFilters();
+  const {
+    destination,
+    origin,
+    route,
+    pickingOriginOnMap,
+    startTo,
+    setOriginFromMap,
+  } = useRoute();
 
   const [searchParams] = useSearchParams();
 
@@ -74,6 +86,8 @@ export function MapPage() {
     lng: number;
 
     token: number;
+
+    label: string;
 
   } | null>(null);
 
@@ -237,6 +251,8 @@ export function MapPage() {
 
         token: (prev?.token ?? 0) + 1,
 
+        label: result.label,
+
       }));
 
     } catch (err: unknown) {
@@ -347,6 +363,24 @@ export function MapPage() {
 
             </button>
 
+            {addressTarget ? (
+              <button
+                type="button"
+                className="btn-toolbar"
+                aria-label="Cómo llegar a la dirección buscada"
+                onClick={() => {
+                  void startTo({
+                    lat: addressTarget.lat,
+                    lng: addressTarget.lng,
+                    label: addressTarget.label,
+                    kind: "direccion",
+                  });
+                }}
+              >
+                Cómo llegar
+              </button>
+            ) : null}
+
           </>
 
         }
@@ -393,6 +427,41 @@ export function MapPage() {
 
           focusFireId={focusFireId}
 
+          routeGeometry={route?.geometry ?? []}
+
+          routeOrigin={origin}
+
+          routeDestination={destination}
+
+          pickingOrigin={pickingOriginOnMap}
+
+          onPickOrigin={setOriginFromMap}
+
+          addressLabel={addressTarget?.label}
+
+          onRouteToAddress={
+            addressTarget
+              ? () => {
+                  void startTo({
+                    lat: addressTarget.lat,
+                    lng: addressTarget.lng,
+                    label: addressTarget.label,
+                    kind: "direccion",
+                  });
+                }
+              : undefined
+          }
+
+          onRouteToResource={(item) => {
+            void startTo({
+              lat: item.lat,
+              lng: item.lng,
+              label: item.name,
+              kind: "recurso",
+              tipoRecurso: item.type,
+            });
+          }}
+
         />
 
         <MapLegend showFire={showFireHeat || showFirePoints} />
@@ -401,7 +470,9 @@ export function MapPage() {
 
 
 
-      {selected ? (
+      <RoutePanel />
+
+      {selected && !destination ? (
 
         <div className="map-sheet" role="dialog" aria-label="Resumen del recurso">
 
@@ -451,6 +522,22 @@ export function MapPage() {
 
             </Link>
 
+            <button
+              type="button"
+              className="btn-toolbar"
+              aria-label={`Cómo llegar a ${selected.name}`}
+              onClick={() => {
+                void startTo({
+                  lat: selected.lat,
+                  lng: selected.lng,
+                  label: selected.name,
+                  kind: "recurso",
+                  tipoRecurso: selected.type,
+                });
+              }}
+            >
+              Cómo llegar
+            </button>
             <Link
               to={`/recursos/${selected.id}/incidencia`}
               className="btn-toolbar"

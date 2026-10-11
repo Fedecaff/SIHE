@@ -7,6 +7,7 @@ Aplicación web para consultar y mantener los recursos hídricos de emergencia d
 ## Funcionalidades
 
 - **Mapa interactivo** (Leaflet + OpenStreetMap) con hidrantes, espejos de agua y tanques, iconos según tipo y estado, y ubicación del usuario.
+- **Cómo llegar**: ruta interna en el mapa hacia un recurso hídrico o una dirección buscada. No abre Google Maps ni otras apps.
 - **Filtros** por tipo, estado y dirección, compartidos entre el mapa y el listado (se guardan en la URL).
 - **Listado** de recursos y **ficha** de cada uno, con datos de accesibilidad, capacidad, última verificación, historial de cambios e incidencias.
 - **Reporte de incidencias** (daño, obstrucción, datos incorrectos u otro), con foto opcional guardada en Supabase Storage y estado sugerido para el recurso.
@@ -24,6 +25,7 @@ Aplicación web para consultar y mantener los recursos hídricos de emergencia d
 | Mapa | Leaflet, react-leaflet, tiles de OpenStreetMap |
 | Backend | Supabase: PostgreSQL + PostGIS, Auth, Row Level Security, Storage |
 | Geocodificación | Photon (datos de OpenStreetMap) |
+| Ruteo | OSRM (perfil driving; servidor configurable) |
 | Calidad | oxlint, `tsc` en el build |
 | Deploy | Vercel (`vercel.json` con rewrites para la SPA) |
 
@@ -36,8 +38,8 @@ src/
   app/          router, sesión (AuthProvider) y guards por rol
   pages/        pantallas: login, mapa, listado, ficha, edición, incidencia, admin
   components/   layout, mapa y panel de filtros
-  hooks/        filtros compartidos y contador de incidencias pendientes
-  services/     acceso a Supabase (recursos, incidencias, incendios, admin, geocodificación)
+  hooks/        filtros compartidos, contador de incidencias y ruta («Cómo llegar»)
+  services/     acceso a Supabase (recursos, incidencias, incendios, admin, geocodificación, ruteo)
   lib/          cliente Supabase, etiquetas, iconos y constantes del mapa
   types/        tipos del dominio
 supabase/       scripts SQL numerados (esquema, permisos, datos)
@@ -48,7 +50,7 @@ scripts/        geocodificación inversa de hidrantes (Python)
 
 Requisitos: Node.js 20 o superior y un proyecto de Supabase.
 
-1. Copiá `.env.example` a `.env` y completá `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` (Supabase → Project Settings → API).
+1. Copiá `.env.example` a `.env` y completá `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` (Supabase → Project Settings → API). `VITE_ROUTING_BASE_URL` es opcional.
 2. En el SQL Editor de Supabase, corré los scripts de `supabase/` en orden numérico. El detalle está en [`supabase/README.md`](supabase/README.md).
 3. Instalá dependencias y levantá el servidor:
 
@@ -64,6 +66,15 @@ Nunca subas el archivo `.env`: ya está en `.gitignore`.
 ## Deploy
 
 La guía completa (variables de entorno, configuración de Auth, verificación y problemas comunes) está en [`DESPLIEGUE.md`](DESPLIEGUE.md).
+
+## Cómo llegar
+
+La ruta se dibuja **dentro del mapa de SIHE**, desde tu ubicación (o un origen elegido a mano) hasta:
+
+- cualquier **recurso hídrico** (hidrante, espejo de agua o tanque), desde el sheet, el popup o la ficha;
+- una **dirección** encontrada con el buscador.
+
+Usa el perfil *driving* de OSRM. El servidor público (`https://router.project-osrm.org`) es solo de **demostración**: no tiene garantía de disponibilidad ni tráfico en tiempo real. La precisión depende de OpenStreetMap en Catamarca. Para producción se recomienda una instancia propia y configurarla en `VITE_ROUTING_BASE_URL`. La ubicación del usuario no se guarda en Supabase.
 
 ## Datos
 

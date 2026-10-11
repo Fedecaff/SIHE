@@ -1040,6 +1040,134 @@ a {
   font-weight: 600;
 }
 
+.map-popup-button {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.map-canvas.is-picking-origin {
+  cursor: crosshair;
+}
+
+.route-origin-dot,
+.route-dest-dot {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px #1e3a8a;
+}
+
+.route-origin-dot {
+  background: #16a34a;
+}
+
+.route-dest-dot {
+  background: #dc2626;
+}
+
+.route-origin-marker,
+.route-dest-marker {
+  background: transparent;
+  border: none;
+}
+
+.route-panel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 56px;
+  z-index: 610;
+  max-height: 36vh;
+  overflow: auto;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  border-radius: 12px 12px 0 0;
+  padding: 10px 12px 12px;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.route-panel-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.route-panel-kicker {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.route-panel h2 {
+  margin: 2px 0 4px;
+  font-size: 16px;
+}
+
+.route-panel-error {
+  margin: 8px -12px 0;
+}
+
+.route-origin-fallback {
+  margin-top: 10px;
+}
+
+.route-origin-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: flex-end;
+  margin-top: 8px;
+}
+
+.route-follow {
+  margin-top: 10px;
+}
+
+.route-steps {
+  margin-top: 10px;
+}
+
+.route-steps summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.route-steps ol {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+.route-steps li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 6px 0;
+  font-size: 13px;
+}
+
+@media (min-width: 768px) {
+  .route-panel {
+    left: 16px;
+    right: auto;
+    bottom: 16px;
+    width: 360px;
+    max-height: 50vh;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+}
+
 .admin-grid {
   display: grid;
   grid-template-columns: 1fr;

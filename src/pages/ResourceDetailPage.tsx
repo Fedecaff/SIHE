@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+
+import { useRoute } from "@/hooks/useRoute";
 
 import { useAuth } from "@/app/providers";
 
@@ -45,6 +47,10 @@ export function ResourceDetailPage() {
   const { id = "" } = useParams();
 
   const { user } = useAuth();
+
+  const navigate = useNavigate();
+
+  const { startTo } = useRoute();
 
   const [resource, setResource] = useState<ResourceDetail | null>(null);
 
@@ -247,6 +253,24 @@ export function ResourceDetailPage() {
           Ver en mapa
 
         </Link>
+
+        <button
+          type="button"
+          className="btn-toolbar"
+          aria-label={`Cómo llegar a ${resource.name}`}
+          onClick={() => {
+            void startTo({
+              lat: resource.lat,
+              lng: resource.lng,
+              label: resource.name,
+              kind: "recurso",
+              tipoRecurso: resource.type,
+            });
+            navigate(mapHref);
+          }}
+        >
+          Cómo llegar
+        </button>
 
         <Link
           to={`/recursos/${resource.id}/incidencia`}

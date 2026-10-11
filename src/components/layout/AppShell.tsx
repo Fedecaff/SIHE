@@ -4,6 +4,7 @@ import { useAuth } from "@/app/providers";
 import { Header } from "@/components/layout/Header";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import { usePendingIncidentCount } from "@/hooks/usePendingIncidentCount";
+import { RouteProvider } from "@/hooks/useRoute";
 
 export function AppShell() {
   const { user } = useAuth();
@@ -11,6 +12,7 @@ export function AppShell() {
   const pendingIncidentCount = usePendingIncidentCount(isAdmin);
 
   return (
+    <RouteProvider>
     <div className="app-shell">
       <Header pendingIncidentCount={pendingIncidentCount} />
       <main className="app-main">
@@ -35,6 +37,7 @@ export function AppShell() {
         ) : null}
       </nav>
     </div>
+    </RouteProvider>
   );
 }
 

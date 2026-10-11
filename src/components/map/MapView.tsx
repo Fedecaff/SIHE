@@ -26,6 +26,10 @@ import type { ResourceMapItem } from "@/types/sihe";
 
 import { CATAMARCA_CENTER, MAP_DEFAULT_ZOOM } from "@/lib/mapConstants";
 import { resourceMapIcon } from "@/lib/mapIcons";
+import { getBrowserLocation } from "@/lib/userLocation";
+import type { LatLng } from "@/lib/userLocation";
+import type { RouteTarget } from "@/services/routing";
+import { RouteLayer } from "@/components/map/RouteLayer";
 
 import { statusLabel, typeLabel } from "@/lib/resourceLabels";
 
@@ -89,6 +93,22 @@ type Props = {
 
   focusFireId?: string | null;
 
+  routeGeometry?: LatLng[];
+
+  routeOrigin?: LatLng | null;
+
+  routeDestination?: RouteTarget | null;
+
+  pickingOrigin?: boolean;
+
+  onPickOrigin?: (point: LatLng) => void;
+
+  addressLabel?: string;
+
+  onRouteToAddress?: () => void;
+
+  onRouteToResource?: (item: ResourceMapItem) => void;
+
 };
 
 
@@ -147,51 +167,37 @@ function LocateControl({
 
     if (token === 0) return;
 
-    if (!navigator.geolocation) {
+    let cancelled = false;
 
-      onLocateError?.("Tu navegador no permite geolocalización.");
+    void getBrowserLocation()
 
-      return;
+      .then((next) => {
 
-    }
-
-
-
-    navigator.geolocation.getCurrentPosition(
-
-      (pos) => {
-
-        const next = {
-
-          lat: pos.coords.latitude,
-
-          lng: pos.coords.longitude,
-
-        };
+        if (cancelled) return;
 
         onUserLocation?.(next);
 
         map.setView([next.lat, next.lng], 16);
 
-      },
+      })
 
-      (err) => {
+      .catch((err: unknown) => {
 
-        const message =
+        if (cancelled) return;
 
-          err.code === err.PERMISSION_DENIED
+        onLocateError?.(
 
-            ? "Permiso de ubicación denegado. Activá la ubicación en el navegador."
+          err instanceof Error ? err.message : "No se pudo obtener tu ubicación.",
 
-            : "No se pudo obtener tu ubicación.";
+        );
 
-        onLocateError?.(message);
+      });
 
-      },
+    return () => {
 
-      { enableHighAccuracy: true, timeout: 10000 },
+      cancelled = true;
 
-    );
+    };
 
   }, [token, map, onUserLocation, onLocateError]);
 
@@ -353,6 +359,22 @@ export function MapView({
 
   focusFireId,
 
+  routeGeometry = [],
+
+  routeOrigin = null,
+
+  routeDestination = null,
+
+  pickingOrigin = false,
+
+  onPickOrigin,
+
+  addressLabel,
+
+  onRouteToAddress,
+
+  onRouteToResource,
+
 }: Props) {
 
   return (
@@ -363,7 +385,7 @@ export function MapView({
 
       zoom={MAP_DEFAULT_ZOOM}
 
-      className="map-canvas"
+      className={pickingOrigin ? "map-canvas is-picking-origin" : "map-canvas"}
 
       scrollWheelZoom
 
@@ -394,6 +416,20 @@ export function MapView({
       <AddressFlyControl target={addressTarget} />
 
       <FireFocusControl fires={fireEvents} focusFireId={focusFireId} />
+
+      <RouteLayer
+
+        geometry={routeGeometry}
+
+        origin={routeOrigin}
+
+        destination={routeDestination}
+
+        pickingOrigin={pickingOrigin}
+
+        onPickOrigin={onPickOrigin ?? (() => undefined)}
+
+      />
 
 
 
@@ -501,7 +537,21 @@ export function MapView({
 
         >
 
-          <Popup>Dirección buscada</Popup>
+          <Popup>
+            <strong>{addressLabel || "Dirección buscada"}</strong>
+            {onRouteToAddress ? (
+              <>
+                <br />
+                <button
+                  type="button"
+                  className="map-popup-link map-popup-button"
+                  onClick={onRouteToAddress}
+                >
+                  Cómo llegar
+                </button>
+              </>
+            ) : null}
+          </Popup>
 
         </Marker>
 
@@ -528,6 +578,18 @@ export function MapView({
             <Link to={`/recursos/${item.id}`} className="map-popup-link">
               Ver ficha
             </Link>
+            {onRouteToResource ? (
+              <>
+                <br />
+                <button
+                  type="button"
+                  className="map-popup-link map-popup-button"
+                  onClick={() => onRouteToResource(item)}
+                >
+                  Cómo llegar
+                </button>
+              </>
+            ) : null}
           </Popup>
         </Marker>
       ))}
