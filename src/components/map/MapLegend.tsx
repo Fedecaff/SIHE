@@ -41,6 +41,10 @@ export function MapLegend({
         : TYPES.filter((type) => type === typeFilter);
   return (
     <aside className={embedded ? "map-legend is-embedded" : "map-legend"} aria-label="Leyenda">
+      <details open>
+        <summary>Qué se ve en el mapa</summary>
+      {types.length > 0 ? (
+        <>
       <h2>Tipo</h2>
       <ul>
         {types.map((type) => (
@@ -59,6 +63,8 @@ export function MapLegend({
           </li>
         ))}
       </ul>
+        </>
+      ) : null}
       <h2>Estado</h2>
       <ul>
         {STATUSES.map((status) => (
@@ -113,6 +119,7 @@ export function MapLegend({
           ) : null}
         </>
       ) : null}
+      </details>
     </aside>
   );
 }

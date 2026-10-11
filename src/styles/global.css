@@ -182,8 +182,8 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: var(--touch-min);
+  height: var(--touch-min);
   border-radius: var(--radius);
   color: #fff;
 }
@@ -1495,6 +1495,13 @@ a {
   left: var(--map-gap);
 }
 .map-page.is-desktop .map-search { left: var(--map-gap); }
+@media (min-width: 768px) and (max-width: 1023px) {
+  .map-sheet:not(.is-side) {
+    left: var(--map-gap);
+    right: auto;
+    width: min(560px, calc(100% - 88px));
+  }
+}
 .map-legend li { min-height: 32px; font-size: 14px; }
 .btn-primary, .btn-toolbar { min-height: var(--touch-min); font-size: 16px; }
 .map-icon-btn:focus-visible,

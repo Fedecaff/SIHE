@@ -37,6 +37,7 @@ export function MapActionRail({
     <div className={dimmed ? "map-rail is-dimmed" : "map-rail"}>
       <div className="map-rail-group">
         <RailButton
+          id="map-rail-capas"
           label="Capas"
           pressed={layersOpen}
           badge={activeOverlays > 0 ? String(activeOverlays) : undefined}
@@ -45,6 +46,7 @@ export function MapActionRail({
           <LayersIcon />
         </RailButton>
         <RailButton
+          id="map-rail-filtros"
           label="Filtros"
           pressed={filtersOpen}
           badge={activeFilters > 0 ? String(activeFilters) : undefined}
@@ -52,7 +54,7 @@ export function MapActionRail({
         >
           <FilterIcon />
         </RailButton>
-        <RailButton label="Leyenda" pressed={legendOpen} onClick={onToggleLegend}>
+        <RailButton id="map-rail-leyenda" label="Leyenda" pressed={legendOpen} onClick={onToggleLegend}>
           <LegendIcon />
         </RailButton>
       </div>
@@ -79,12 +81,14 @@ export function MapActionRail({
 }
 
 function RailButton({
+  id,
   label,
   pressed,
   badge,
   onClick,
   children,
 }: {
+  id?: string;
   label: string;
   pressed?: boolean;
   badge?: string;
@@ -93,6 +97,7 @@ function RailButton({
 }) {
   return (
     <button
+      id={id}
       type="button"
       className={pressed ? "map-rail-btn is-pressed" : "map-rail-btn"}
       aria-label={label}

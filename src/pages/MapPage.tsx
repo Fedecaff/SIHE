@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useAuth } from "@/app/providers";
 import type { ResourceMapItem } from "@/types/sihe";
@@ -77,10 +77,28 @@ export function MapPage() {
   const [dismissed, setDismissed] = useState<string[]>([]);
   const [desktopOpen, setDesktopOpen] = useState(wide);
   const [toolTab, setToolTab] = useState<"filtros" | "capas" | "leyenda">("filtros");
+  const returnFocus = useRef<string | null>(null);
+  const closeSheetRef = useRef<() => void>(() => undefined);
+
+  useEffect(() => {
+    if (panel.tool || !returnFocus.current) return;
+    document.getElementById(returnFocus.current)?.focus();
+    returnFocus.current = null;
+  }, [panel.tool]);
 
   const view = resolveSheet(panel, {
     routeActive: Boolean(destination),
     pickingOrigin: pickingOriginOnMap,
+  });
+
+  function closeSheet() {
+    if (panel.tool) returnFocus.current = `map-rail-${panel.tool}`;
+    if (view.kind === "ruta") dispatch({ type: "set-height", height: "peek" });
+    else dispatch({ type: "escape" });
+  }
+
+  useEffect(() => {
+    closeSheetRef.current = closeSheet;
   });
 
   const handleUserLocation = useCallback((pos: { lat: number; lng: number }) => {
@@ -94,7 +112,7 @@ export function MapPage() {
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
-      if (event.key === "Escape") dispatch({ type: "escape" });
+      if (event.key === "Escape") closeSheetRef.current();
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -555,12 +573,9 @@ export function MapPage() {
           height={sheetHeight}
           side={chrome === "landscape"}
           backLabel={view.backToRoute ? "← Volver a la ruta" : undefined}
-          onBack={view.backToRoute ? () => dispatch({ type: "escape" }) : undefined}
+          onBack={view.backToRoute ? closeSheet : undefined}
           onHeight={(height) => dispatch({ type: "set-height", height })}
-          onClose={() => {
-            if (view.kind === "ruta") dispatch({ type: "set-height", height: "peek" });
-            else dispatch({ type: "escape" });
-          }}
+          onClose={closeSheet}
         >
           {sheetBody}
         </MapBottomSheet>

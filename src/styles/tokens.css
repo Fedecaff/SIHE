@@ -27,3 +27,7 @@
   --z-app-nav: 40;
   --z-modal: 100;
 }
+
+/* Breakpoints: móvil < 768, tablet 768–1023, escritorio ≥ 1024,
+   ancho ≥ 1280 abre el panel, apaisado bajo: (orientation: landscape) and (max-height: 500px).
+   La copia en JS está en src/lib/breakpoints.ts. */
