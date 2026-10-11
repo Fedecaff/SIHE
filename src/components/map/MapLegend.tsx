@@ -11,9 +11,24 @@ const STATUSES: ResourceStatus[] = [
 
 type Props = {
   showFire?: boolean;
+  showModis?: boolean;
+  showViirs?: boolean;
+  showWms?: boolean;
+  showFirms?: boolean;
+  imageDate?: string;
+  firmsLabel?: string | null;
 };
 
-export function MapLegend({ showFire = false }: Props) {
+export function MapLegend({
+  showFire = false,
+  showModis = false,
+  showViirs = false,
+  showWms = false,
+  showFirms = false,
+  imageDate,
+  firmsLabel,
+}: Props) {
+  const showSatellite = showModis || showViirs || showWms || showFirms;
   return (
     <aside className="map-legend" aria-label="Leyenda">
       <h2>Tipo</h2>
@@ -55,6 +70,39 @@ export function MapLegend({ showFire = false }: Props) {
           </li>
         ) : null}
       </ul>
+      {showSatellite ? (
+        <>
+          <h2>Fuego satelital</h2>
+          <p className="map-legend-note">Fecha o ventana: {imageDate}</p>
+          {showFirms ? (
+            <ul>
+              <li>
+                <span className="map-legend-dot" style={{ background: "#d7301f" }} />
+                Confianza alta
+              </li>
+              <li>
+                <span className="map-legend-dot" style={{ background: "#fc8d59" }} />
+                Confianza nominal
+              </li>
+              <li>
+                <span className="map-legend-dot" style={{ background: "#fdcc8a" }} />
+                Confianza baja
+              </li>
+            </ul>
+          ) : null}
+          {firmsLabel ? <p className="map-legend-note">{firmsLabel}</p> : null}
+          {showModis || showViirs ? (
+            <p className="map-legend-note">
+              7-2-1: rojo/marrón, posible área quemada; verde, vegetación.
+            </p>
+          ) : null}
+          {showWms ? (
+            <p className="map-legend-note">
+              Fuego WMS: anomalías térmicas de VIIRS y MODIS (NASA GIBS).
+            </p>
+          ) : null}
+        </>
+      ) : null}
     </aside>
   );
 }

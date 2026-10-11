@@ -15,6 +15,7 @@ Aplicación web para consultar y mantener los recursos hídricos de emergencia d
   - *Operador*: consulta el mapa y las fichas y reporta incidencias.
   - *Administrador*: además aprueba o rechaza incidencias, edita fichas, da de alta recursos, gestiona usuarios y registra incendios.
 - **Incendios históricos**: registro de eventos y mapa de calor con filtro temporal.
+- **Capas del mapa**: texturas base (callejero, satélite y topográfico) y capas satelitales de fuego de NASA, además de los recursos y los incendios históricos.
 - **Notificaciones**: el administrador ve un contador de incidencias pendientes.
 
 ## Stack
@@ -22,11 +23,12 @@ Aplicación web para consultar y mantener los recursos hídricos de emergencia d
 | Capa | Tecnología |
 | --- | --- |
 | Frontend | React 19, TypeScript, Vite, React Router 7 |
-| Mapa | Leaflet, react-leaflet, tiles de OpenStreetMap |
+| Mapa | Leaflet, react-leaflet, OpenStreetMap, Esri, IGN Argenmap, OpenTopoMap |
+| Fuego satelital | NASA GIBS (imágenes y anomalías) y NASA FIRMS (focos NRT) |
 | Backend | Supabase: PostgreSQL + PostGIS, Auth, Row Level Security, Storage |
 | Geocodificación | Photon (datos de OpenStreetMap) |
 | Ruteo | OSRM (perfil driving; servidor configurable) |
-| Calidad | oxlint, `tsc` en el build |
+| Calidad | oxlint, Vitest, `tsc` en el build |
 | Deploy | Vercel (`vercel.json` con rewrites para la SPA) |
 
 El frontend solo usa la **anon key** de Supabase. Los permisos se controlan en la base con **RLS**: lectura para usuarios autenticados y escritura según el rol, validada con `is_admin()` y funciones `SECURITY DEFINER`.
@@ -66,6 +68,19 @@ Nunca subas el archivo `.env`: ya está en `.gitignore`.
 ## Deploy
 
 La guía completa (variables de entorno, configuración de Auth, verificación y problemas comunes) está en [`DESPLIEGUE.md`](DESPLIEGUE.md).
+
+## Capas satelitales
+
+Son un apoyo visual. No reemplazan el reporte oficial ni la verificación en terreno, ni los recursos hídricos ni los incendios cargados por el cuartel.
+
+| Capa | Fuente | Clave | Actualización |
+| --- | --- | --- | --- |
+| Mapa, satélite, topográfico, relieve | OpenStreetMap, Esri, IGN | No | Teselas públicas |
+| Fuego MODIS 7-2-1 y VIIRS M11-I2-I1 | NASA GIBS | No | Imagen diaria (el día se completa en UTC) |
+| Fuego WMS | NASA GIBS, anomalías térmicas | No | Diaria |
+| Focos FIRMS | NASA FIRMS Area API | Sí, `MAP_KEY` solo en el servidor | NRT, latencia de hasta 3 h |
+
+La clave de FIRMS no va en el frontend de producción: la pide la Edge Function `firms-proxy`. En local se puede usar `VITE_FIRMS_MAP_KEY`, pero esa variable queda en el bundle y no sirve para publicar. El pedido de la clave y el deploy están en [`DESPLIEGUE.md`](DESPLIEGUE.md).
 
 ## Cómo llegar
 

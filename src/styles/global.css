@@ -635,6 +635,40 @@ a {
   font-size: 13px;
 }
 
+.map-warning {
+  margin: 0;
+  padding: 8px 12px;
+  background: var(--color-warning-bg);
+  color: var(--color-text);
+  font-size: 13px;
+}
+
+.filter-satellite {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  align-items: flex-end;
+}
+
+.filter-note,
+.map-legend-note {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--color-muted);
+  line-height: 1.35;
+}
+
+.filter-field input:focus-visible,
+.filter-field select:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.leaflet-control-layers {
+  max-width: min(260px, 72vw);
+}
+
 .map-body {
   position: relative;
   flex: 1;
@@ -658,6 +692,17 @@ a {
   padding: 10px 12px;
   font-size: 12px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  max-height: min(46vh, 360px);
+  overflow: auto;
+}
+
+@media (max-width: 767px) {
+  .map-legend {
+    left: 8px;
+    right: auto;
+    bottom: 72px;
+    max-height: 30vh;
+  }
 }
 
 .map-legend h2 {

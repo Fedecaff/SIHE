@@ -45,6 +45,33 @@ En Storage, debe existir el bucket `incident-photos`:
 
 Si no existe, crearlo manualmente con esa configuración.
 
+### 1.4 Clave de NASA FIRMS (focos satelitales)
+
+1. Pedí una `MAP_KEY` en https://firms.modaps.eosdis.nasa.gov/api/map_key/
+2. En la máquina con Supabase CLI, dentro del proyecto:
+
+```bash
+supabase secrets set FIRMS_MAP_KEY=la-clave-que-te-dio-nasa
+supabase secrets set FIRMS_ALLOWED_ORIGINS=https://tu-app.vercel.app
+supabase functions deploy firms-proxy
+```
+
+`FIRMS_ALLOWED_ORIGINS` es el dominio público de SIHE (se puede separar varios con coma). `localhost` ya está permitido por la función. El deploy deja la verificación de JWT activa: solo entra un usuario logueado.
+
+Probar, con un token de sesión de SIHE:
+
+```bash
+curl -i -X POST "https://tu-proyecto.supabase.co/functions/v1/firms-proxy" \
+  -H "Authorization: Bearer TOKEN" \
+  -H "apikey: ANON_KEY" \
+  -H "Content-Type: application/json" \
+  -d "{\"source\":\"VIIRS_SNPP_NRT\",\"days\":1,\"bbox\":[-69.2,-30.2,-64.8,-25.0]}"
+```
+
+Sin `Authorization` tiene que responder 401. Con `"days": 9` o una fuente inventada, 400. Si falta el secreto, 503 y el mensaje no incluye la clave.
+
+En local, `supabase functions serve firms-proxy` usa los mismos secretos (`supabase secrets` o un archivo de entorno de la CLI). No hace falta correr SQL nuevo para esta capa: los focos no se guardan en la base.
+
 ## Paso 2: Configurar Vercel
 
 ### 2.1 Variables de entorno
@@ -58,6 +85,8 @@ VITE_ROUTING_BASE_URL=https://router.project-osrm.org
 ```
 
 `VITE_ROUTING_BASE_URL` es opcional. Si no se define, se usa el servidor público de OSRM (solo demo).
+
+No agregues `VITE_FIRMS_MAP_KEY` en Vercel: quedaría dentro del JavaScript público. La clave de los focos satelitales se configura en Supabase (paso 1.4).
 
 **Dónde encontrar estos valores:**
 - Supabase → Project Settings → API

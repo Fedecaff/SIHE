@@ -4,6 +4,7 @@ import { useAuth } from "@/app/providers";
 import type { ResourceMapItem } from "@/types/sihe";
 
 import { FilterPanel } from "@/components/resources/FilterPanel";
+import { SatelliteControls } from "@/components/map/SatelliteControls";
 
 import { MapLegend } from "@/components/map/MapLegend";
 
@@ -14,6 +15,13 @@ import { RoutePanel } from "@/components/map/RoutePanel";
 import { useResourceFilters } from "@/hooks/useResourceFilters";
 
 import { useRoute } from "@/hooks/useRoute";
+import { useSatelliteLayers } from "@/hooks/useSatelliteLayers";
+import {
+  OVERLAY_FIRMS,
+  OVERLAY_MODIS,
+  OVERLAY_VIIRS,
+  OVERLAY_WMS,
+} from "@/lib/mapConstants";
 
 import { formatDateTime } from "@/lib/incidentLabels";
 
@@ -46,6 +54,7 @@ export function MapPage() {
     startTo,
     setOriginFromMap,
   } = useRoute();
+  const satellite = useSatelliteLayers();
 
   const [searchParams] = useSearchParams();
 
@@ -321,6 +330,23 @@ export function MapPage() {
 
         }}
 
+        satellite={
+          <SatelliteControls
+            date={satellite.date}
+            windowMode={satellite.windowMode}
+            source={satellite.source}
+            confidence={satellite.confidence}
+            minFrp={satellite.minFrp}
+            opacity={satellite.opacity}
+            onDateChange={satellite.setDate}
+            onWindowChange={satellite.setWindowMode}
+            onSourceChange={satellite.setSource}
+            onConfidenceChange={satellite.setConfidence}
+            onMinFrpChange={satellite.setMinFrp}
+            onOpacityChange={satellite.setOpacity}
+          />
+        }
+
         resultCount={items.length}
 
         loading={loading}
@@ -397,6 +423,18 @@ export function MapPage() {
 
       ) : null}
 
+      {satellite.tileWarning ? (
+        <p className="map-warning" role="status">
+          {satellite.tileWarning}
+        </p>
+      ) : null}
+
+      {satellite.firmsError ? (
+        <p className="map-warning" role="status">
+          {satellite.firmsError}
+        </p>
+      ) : null}
+
       <div className="map-body">
 
         <MapView
@@ -462,9 +500,26 @@ export function MapPage() {
             });
           }}
 
+          baseLayer={satellite.baseLayer}
+          overlays={satellite.overlays}
+          satelliteDate={satellite.date}
+          satelliteOpacity={satellite.opacity}
+          firmsHotspots={satellite.hotspots}
+          onBaseLayerChange={satellite.changeBase}
+          onOverlayChange={satellite.changeOverlay}
+          onTileError={satellite.reportTileError}
+
         />
 
-        <MapLegend showFire={showFireHeat || showFirePoints} />
+        <MapLegend
+          showFire={showFireHeat || showFirePoints}
+          showModis={satellite.overlays.includes(OVERLAY_MODIS)}
+          showViirs={satellite.overlays.includes(OVERLAY_VIIRS)}
+          showWms={satellite.overlays.includes(OVERLAY_WMS)}
+          showFirms={satellite.overlays.includes(OVERLAY_FIRMS)}
+          imageDate={satellite.date}
+          firmsLabel={satellite.firmsLabel}
+        />
 
       </div>
 

@@ -66,3 +66,14 @@ Para crear usuarios desde `/admin/usuarios`:
 - En Supabase → Authentication → Providers → Email: **Allow new users** activado (la app no tiene registro público; el alta la hace un administrador).
 - El rol **solo** lo asigna un administrador (desde `/admin/usuarios` o actualizando `profiles`). `signUp` no puede elegir `app_role`: el trigger crea operador inactivo.
 - Confirmación de email: desactivada en el MVP local, o el usuario no podrá entrar hasta confirmar.
+
+## Focos satelitales (NASA FIRMS)
+
+No hay script SQL. Los focos se consultan al vuelo y no se guardan.
+
+1. Pedí la clave en https://firms.modaps.eosdis.nasa.gov/api/map_key/
+2. `supabase secrets set FIRMS_MAP_KEY=...`
+3. `supabase secrets set FIRMS_ALLOWED_ORIGINS=https://tu-app.vercel.app`
+4. `supabase functions deploy firms-proxy`
+
+La función está en `supabase/functions/firms-proxy`. El detalle de la prueba con `curl` está en `DESPLIEGUE.md`.

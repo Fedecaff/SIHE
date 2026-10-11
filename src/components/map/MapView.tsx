@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -14,9 +14,11 @@ import {
 
   Popup,
 
-  TileLayer,
+  LayersControl,
 
   useMap,
+
+  useMapEvents,
 
 } from "react-leaflet";
 
@@ -30,6 +32,9 @@ import { getBrowserLocation } from "@/lib/userLocation";
 import type { LatLng } from "@/lib/userLocation";
 import type { RouteTarget } from "@/services/routing";
 import { RouteLayer } from "@/components/map/RouteLayer";
+import { BaseLayers } from "@/components/map/BaseLayers";
+import { FireLayers } from "@/components/map/FireLayers";
+import type { FirmsHotspot } from "@/lib/firmsHotspots";
 
 import { statusLabel, typeLabel } from "@/lib/resourceLabels";
 
@@ -108,6 +113,22 @@ type Props = {
   onRouteToAddress?: () => void;
 
   onRouteToResource?: (item: ResourceMapItem) => void;
+
+  baseLayer?: string;
+
+  overlays?: string[];
+
+  satelliteDate?: string;
+
+  satelliteOpacity?: number;
+
+  firmsHotspots?: FirmsHotspot[];
+
+  onBaseLayerChange?: (name: string) => void;
+
+  onOverlayChange?: (name: string, enabled: boolean) => void;
+
+  onTileError?: (name: string) => void;
 
 };
 
@@ -375,7 +396,27 @@ export function MapView({
 
   onRouteToResource,
 
+  baseLayer = "Mapa (OSM)",
+
+  overlays = [],
+
+  satelliteDate = "",
+
+  satelliteOpacity = 1,
+
+  firmsHotspots = [],
+
+  onBaseLayerChange,
+
+  onOverlayChange,
+
+  onTileError,
+
 }: Props) {
+
+  const [layersCollapsed, setLayersCollapsed] = useState(() =>
+    window.matchMedia("(max-width: 767px)").matches,
+  );
 
   return (
 
@@ -391,12 +432,29 @@ export function MapView({
 
     >
 
-      <TileLayer
+      <MapPanes />
 
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      <LayersControl position="topright" collapsed={layersCollapsed}>
 
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        <BaseLayers
+          activeName={baseLayer}
+          onTileError={onTileError ?? (() => undefined)}
+        />
 
+        <FireLayers
+          activeOverlays={overlays}
+          date={satelliteDate}
+          opacity={satelliteOpacity}
+          hotspots={firmsHotspots}
+          onTileError={onTileError ?? (() => undefined)}
+        />
+
+      </LayersControl>
+
+      <LayerSync
+        onBase={onBaseLayerChange}
+        onOverlay={onOverlayChange}
+        onNarrow={setLayersCollapsed}
       />
 
       <LocateControl
@@ -517,7 +575,11 @@ export function MapView({
 
       {userLocation ? (
 
-        <Marker position={[userLocation.lat, userLocation.lng]} icon={userIcon}>
+        <Marker
+          pane="resources"
+          position={[userLocation.lat, userLocation.lng]}
+          icon={userIcon}
+        >
 
           <Popup>Tu ubicación</Popup>
 
@@ -530,11 +592,9 @@ export function MapView({
       {addressTarget ? (
 
         <Marker
-
+          pane="resources"
           position={[addressTarget.lat, addressTarget.lng]}
-
           icon={addressIcon}
-
         >
 
           <Popup>
@@ -562,6 +622,7 @@ export function MapView({
       {items.map((item) => (
         <Marker
           key={item.id}
+          pane="resources"
           position={[item.lat, item.lng]}
           icon={resourceMapIcon(item.type, item.status)}
           eventHandlers={{
@@ -598,6 +659,52 @@ export function MapView({
 
   );
 
+}
+
+function MapPanes() {
+  const map = useMap();
+  useLayoutEffect(() => {
+    if (!map.getPane("resources")) {
+      const resources = map.createPane("resources");
+      resources.style.zIndex = "650";
+    }
+    if (!map.getPane("firms")) {
+      const firms = map.createPane("firms");
+      firms.style.zIndex = "450";
+    }
+  }, [map]);
+  return null;
+}
+
+function LayerSync({
+  onBase,
+  onOverlay,
+  onNarrow,
+}: {
+  onBase?: (name: string) => void;
+  onOverlay?: (name: string, enabled: boolean) => void;
+  onNarrow: (value: boolean) => void;
+}) {
+  useMapEvents({
+    baselayerchange(event) {
+      onBase?.(event.name);
+    },
+    overlayadd(event) {
+      onOverlay?.(event.name, true);
+    },
+    overlayremove(event) {
+      onOverlay?.(event.name, false);
+    },
+  });
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 767px)");
+    const update = () => onNarrow(query.matches);
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, [onNarrow]);
+
+  return null;
 }
 
 
