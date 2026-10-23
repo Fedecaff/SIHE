@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect, useMemo } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -19,6 +19,8 @@ import {
   useMapEvents,
 
 } from "react-leaflet";
+
+import MarkerClusterGroup from "react-leaflet-cluster";
 
 import L from "leaflet";
 
@@ -449,6 +451,15 @@ export function MapView({
     : pickingDestination
       ? "map-canvas is-picking-destination"
       : "map-canvas";
+  
+  const resourceMarkers = useMemo(() => {
+    return items.map((item) => ({
+      id: item.id,
+      position: [item.lat, item.lng] as [number, number],
+      icon: resourceMapIcon(item.type, item.status),
+      item,
+    }));
+  }, [items]);
 
   return (
 
@@ -642,17 +653,35 @@ export function MapView({
 
 
 
-      {items.map((item) => (
-        <Marker
-          key={item.id}
-          pane="resources"
-          position={[item.lat, item.lng]}
-          icon={resourceMapIcon(item.type, item.status)}
-          eventHandlers={{
-            click: () => onSelectResource?.(item),
-          }}
-        />
-      ))}
+      <MarkerClusterGroup
+        chunkedLoading
+        showCoverageOnHover={false}
+        maxClusterRadius={60}
+        spiderfyOnMaxZoom
+        iconCreateFunction={(cluster: { getChildCount: () => number }) => {
+          const count = cluster.getChildCount();
+          let sizeClass = "small";
+          if (count >= 100) sizeClass = "large";
+          else if (count >= 10) sizeClass = "medium";
+          return L.divIcon({
+            html: `<div><span>${count}</span></div>`,
+            className: `marker-cluster marker-cluster-${sizeClass}`,
+            iconSize: L.point(40, 40),
+          });
+        }}
+      >
+        {resourceMarkers.map(({ id, position, icon, item }) => (
+          <Marker
+            key={id}
+            pane="resources"
+            position={position}
+            icon={icon}
+            eventHandlers={{
+              click: () => onSelectResource?.(item),
+            }}
+          />
+        ))}
+      </MarkerClusterGroup>
 
     </MapContainer>
 
