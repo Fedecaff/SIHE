@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Layers, SlidersHorizontal, Info, MapPin, Locate, Home, Plus, Minus } from "lucide-react";
 
 type Props = {
   filtersOpen: boolean;
@@ -47,7 +48,7 @@ export function MapActionRail({
           badge={activeOverlays > 0 ? String(activeOverlays) : undefined}
           onClick={onToggleLayers}
         >
-          <LayersIcon />
+          <Layers size={20} strokeWidth={2.5} />
         </RailButton>
         <RailButton
           id="map-rail-filtros"
@@ -56,10 +57,10 @@ export function MapActionRail({
           badge={activeFilters > 0 ? String(activeFilters) : undefined}
           onClick={onToggleFilters}
         >
-          <FilterIcon />
+          <SlidersHorizontal size={20} strokeWidth={2.5} />
         </RailButton>
         <RailButton id="map-rail-leyenda" label="Leyenda" pressed={legendOpen} onClick={onToggleLegend}>
-          <LegendIcon />
+          <Info size={20} strokeWidth={2.5} />
         </RailButton>
       </div>
       <div className="map-rail-group">
@@ -69,23 +70,23 @@ export function MapActionRail({
           pressed={pickingPoint}
           onClick={onTogglePickPoint}
         >
-          <PinIcon />
+          <MapPin size={20} strokeWidth={2.5} />
         </RailButton>
         {showZoom ? (
           <>
             <RailButton label="Acercar" onClick={onZoomIn}>
-              <span className="map-rail-glyph" aria-hidden="true">+</span>
+              <Plus size={20} strokeWidth={2.5} />
             </RailButton>
             <RailButton label="Alejar" onClick={onZoomOut}>
-              <span className="map-rail-glyph" aria-hidden="true">−</span>
+              <Minus size={20} strokeWidth={2.5} />
             </RailButton>
           </>
         ) : null}
         <RailButton label="Mi ubicación" onClick={onLocate}>
-          <LocateIcon />
+          <Locate size={20} strokeWidth={2.5} />
         </RailButton>
         <RailButton label="Centrar" onClick={onHome}>
-          <HomeIcon />
+          <Home size={20} strokeWidth={2.5} />
         </RailButton>
       </div>
     </div>
@@ -125,54 +126,3 @@ function RailButton({
   );
 }
 
-function LayersIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="map-svg">
-      <path d="M12 4l8 4-8 4-8-4 8-4zm0 8l8 4-8 4-8-4 8-4z" fill="none" stroke="currentColor" strokeWidth="2" />
-    </svg>
-  );
-}
-
-function FilterIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="map-svg">
-      <path d="M4 6h16M7 12h10M10 18h4" fill="none" stroke="currentColor" strokeWidth="2" />
-    </svg>
-  );
-}
-
-function LegendIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="map-svg">
-      <rect x="4" y="5" width="6" height="6" fill="currentColor" />
-      <rect x="4" y="13" width="6" height="6" fill="none" stroke="currentColor" strokeWidth="2" />
-      <path d="M13 8h7M13 16h7" stroke="currentColor" strokeWidth="2" />
-    </svg>
-  );
-}
-
-function LocateIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="map-svg">
-      <circle cx="12" cy="12" r="3" fill="currentColor" />
-      <circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" strokeWidth="2" />
-    </svg>
-  );
-}
-
-function HomeIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="map-svg">
-      <path d="M4 11l8-7 8 7v8H4v-8z" fill="none" stroke="currentColor" strokeWidth="2" />
-    </svg>
-  );
-}
-
-function PinIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="map-svg">
-      <path d="M12 2c-3.9 0-7 3.1-7 7 0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z" fill="none" stroke="currentColor" strokeWidth="2" />
-      <circle cx="12" cy="9" r="2.5" fill="currentColor" />
-    </svg>
-  );
-}

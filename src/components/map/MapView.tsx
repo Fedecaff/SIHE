@@ -139,30 +139,22 @@ type Props = {
 
 
 
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { MapPinned, User } from "lucide-react";
+
 const addressIcon = L.divIcon({
-
   className: "address-marker",
-
-  html: '<span class="address-marker-dot"></span>',
-
-  iconSize: [18, 18],
-
-  iconAnchor: [9, 9],
-
+  html: `<div class="map-icon-pin map-icon-address">${renderToStaticMarkup(createElement(MapPinned, { size: 18, strokeWidth: 2.5 }))}</div>`,
+  iconSize: [24, 24],
+  iconAnchor: [12, 24],
 });
 
-
-
 const userIcon = L.divIcon({
-
   className: "user-marker",
-
-  html: '<span class="user-marker-dot"></span>',
-
-  iconSize: [22, 22],
-
-  iconAnchor: [11, 11],
-
+  html: `<div class="map-icon-pulse">${renderToStaticMarkup(createElement(User, { size: 16, strokeWidth: 3 }))}</div>`,
+  iconSize: [24, 24],
+  iconAnchor: [12, 12],
 });
 
 

@@ -1,5 +1,7 @@
-import { useEffect } from "react";
+import { createElement, useEffect } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { Marker, Polyline, Popup, useMap, useMapEvents } from "react-leaflet";
+import { Circle, Flag } from "lucide-react";
 import L from "leaflet";
 import type { LatLng } from "@/lib/userLocation";
 import { typeLabel } from "@/lib/resourceLabels";
@@ -7,16 +9,16 @@ import type { RouteTarget } from "@/services/routing";
 
 const originIcon = L.divIcon({
   className: "route-origin-marker",
-  html: '<span class="route-origin-dot"></span>',
-  iconSize: [22, 22],
-  iconAnchor: [11, 11],
+  html: `<div class="map-icon-circle map-icon-origin">${renderToStaticMarkup(createElement(Circle, { size: 16, strokeWidth: 3 }))}</div>`,
+  iconSize: [24, 24],
+  iconAnchor: [12, 12],
 });
 
 const destIcon = L.divIcon({
   className: "route-dest-marker",
-  html: '<span class="route-dest-dot"></span>',
-  iconSize: [22, 22],
-  iconAnchor: [11, 11],
+  html: `<div class="map-icon-pin map-icon-dest">${renderToStaticMarkup(createElement(Flag, { size: 18, strokeWidth: 2.5 }))}</div>`,
+  iconSize: [24, 24],
+  iconAnchor: [12, 24],
 });
 
 function destinationCaption(target: RouteTarget): string {

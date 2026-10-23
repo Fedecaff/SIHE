@@ -1,6 +1,19 @@
-import { resourceGlyphSvg } from "@/lib/mapIcons";
+import { createElement } from "react";
+import { Droplet, Flame, Container } from "lucide-react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { statusColor, statusLabel, typeColor, typeLabel } from "@/lib/resourceLabels";
 import type { ResourceStatus, ResourceType } from "@/types/sihe";
+
+function getLucideIcon(type: ResourceType) {
+  switch (type) {
+    case "espejo":
+      return Droplet;
+    case "tanque":
+      return Container;
+    default:
+      return Flame;
+  }
+}
 
 const TYPES: ResourceType[] = ["hidrante", "espejo", "tanque"];
 const STATUSES: ResourceStatus[] = [
@@ -47,21 +60,26 @@ export function MapLegend({
         <>
       <h2>Tipo</h2>
       <ul>
-        {types.map((type) => (
-          <li key={type}>
-            <span
-              className="map-legend-icon"
-              style={{
-                background: typeColor(type),
-                borderColor: statusColor("operativo"),
-              }}
-              dangerouslySetInnerHTML={{
-                __html: resourceGlyphSvg(type, "#fff", 14),
-              }}
-            />
-            {typeLabel(type)}
-          </li>
-        ))}
+        {types.map((type) => {
+          const IconComponent = getLucideIcon(type);
+          return (
+            <li key={type}>
+              <span
+                className="map-legend-icon"
+                style={{
+                  background: typeColor(type),
+                  borderColor: statusColor("operativo"),
+                }}
+                dangerouslySetInnerHTML={{
+                  __html: renderToStaticMarkup(
+                    createElement(IconComponent, { size: 14, color: "#fff", strokeWidth: 2.5 })
+                  ),
+                }}
+              />
+              {typeLabel(type)}
+            </li>
+          );
+        })}
       </ul>
         </>
       ) : null}
