@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { useAuth, useToast } from "@/app/providers";
 import { Spinner } from "@/components/ui/Spinner";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 
 import { toUserMessage } from "@/lib/errorMessages";
 
@@ -57,7 +58,15 @@ export function ReportIncidentPage() {
 
   const [error, setError] = useState<string | null>(null);
 
+  const [dirty, setDirty] = useState(false);
 
+  const [allowLeave, setAllowLeave] = useState(false);
+
+  useUnsavedChanges(dirty && !allowLeave && !saving);
+
+  function markDirty() {
+    setDirty(true);
+  }
 
   useEffect(() => {
 
@@ -131,6 +140,10 @@ export function ReportIncidentPage() {
 
       });
 
+      setAllowLeave(true);
+
+      setDirty(false);
+
       showToast("Incidencia enviada");
 
       navigate(`/recursos/${id}`);
@@ -191,7 +204,10 @@ export function ReportIncidentPage() {
 
             value={type}
 
-            onChange={(e) => setType(e.target.value as IncidentType)}
+            onChange={(e) => {
+              markDirty();
+              setType(e.target.value as IncidentType);
+            }}
 
             required
 
@@ -223,7 +239,10 @@ export function ReportIncidentPage() {
 
             value={description}
 
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) => {
+              markDirty();
+              setDescription(e.target.value);
+            }}
 
             required
 
@@ -243,11 +262,10 @@ export function ReportIncidentPage() {
 
             value={suggestedStatus}
 
-            onChange={(e) =>
-
-              setSuggestedStatus(e.target.value as ResourceStatus | "")
-
-            }
+            onChange={(e) => {
+              markDirty();
+              setSuggestedStatus(e.target.value as ResourceStatus | "");
+            }}
 
           >
 
@@ -279,7 +297,10 @@ export function ReportIncidentPage() {
 
             accept="image/jpeg,image/png,image/webp"
 
-            onChange={(e) => setPhoto(e.target.files?.[0] ?? null)}
+            onChange={(e) => {
+              markDirty();
+              setPhoto(e.target.files?.[0] ?? null);
+            }}
 
           />
 

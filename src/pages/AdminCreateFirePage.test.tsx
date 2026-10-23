@@ -39,6 +39,10 @@ vi.mock("@/services/fires", () => ({
   createFireEventAdmin,
 }));
 
+vi.mock("@/hooks/useUnsavedChanges", () => ({
+  useUnsavedChanges: () => undefined,
+}));
+
 function renderPage() {
   return render(
     <ToastProvider>

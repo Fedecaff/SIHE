@@ -8,6 +8,7 @@ import {
 } from "react-leaflet";
 import L from "leaflet";
 import { useToast } from "@/app/providers";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import { toUserMessage } from "@/lib/errorMessages";
 import { CATAMARCA_CENTER, MAP_DEFAULT_ZOOM } from "@/lib/mapConstants";
 import { formatMapCoords } from "@/services/geocode";
@@ -55,6 +56,14 @@ export function AdminCreateFirePage() {
   const [lng, setLng] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [dirty, setDirty] = useState(false);
+  const [allowLeave, setAllowLeave] = useState(false);
+
+  useUnsavedChanges(dirty && !allowLeave && !saving);
+
+  function markDirty() {
+    setDirty(true);
+  }
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -83,6 +92,8 @@ export function AdminCreateFirePage() {
         lng,
         description,
       });
+      setAllowLeave(true);
+      setDirty(false);
       showToast("Incendio registrado");
       navigate(`/incendios/${id}`);
     } catch (err: unknown) {
@@ -113,9 +124,10 @@ export function AdminCreateFirePage() {
             <span>Tipo</span>
             <select
               value={eventType}
-              onChange={(e) =>
-                setEventType(e.target.value as FireEventType)
-              }
+              onChange={(e) => {
+                markDirty();
+                setEventType(e.target.value as FireEventType);
+              }}
             >
               <option value="incendio_forestal">Incendio forestal</option>
               <option value="incendio_urbano">Incendio urbano</option>
@@ -128,7 +140,10 @@ export function AdminCreateFirePage() {
               type="datetime-local"
               value={occurredAt}
               max={toLocalInputValue(new Date())}
-              onChange={(e) => setOccurredAt(e.target.value)}
+              onChange={(e) => {
+                markDirty();
+                setOccurredAt(e.target.value);
+              }}
               required
             />
           </label>
@@ -139,7 +154,10 @@ export function AdminCreateFirePage() {
           <textarea
             rows={3}
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) => {
+              markDirty();
+              setDescription(e.target.value);
+            }}
             maxLength={500}
             placeholder="Barrio, causa, o lo que sirva para el parte"
           />
@@ -171,6 +189,7 @@ export function AdminCreateFirePage() {
             />
             <ClickPicker
               onPick={(pickLat, pickLng) => {
+                markDirty();
                 setLat(pickLat);
                 setLng(pickLng);
                 setError(null);
