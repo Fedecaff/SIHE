@@ -36,6 +36,10 @@ vi.mock("react-leaflet", () => ({
   useMapEvents: () => null,
 }));
 
+vi.mock("react-leaflet-cluster", () => ({
+  default: ({ children }: { children?: unknown }) => children,
+}));
+
 vi.mock("@/app/providers", () => ({
   useAuth: () => ({ user: null }),
 }));
@@ -92,11 +96,15 @@ vi.mock("@/hooks/useRoute", () => ({
     error: null,
     needsOrigin: false,
     pickingOriginOnMap: false,
+    pickingDestinationOnMap: false,
     followLive: false,
     startTo: vi.fn(),
     setOriginFromAddress: vi.fn(),
     beginPickOriginOnMap: vi.fn(),
     setOriginFromMap: vi.fn(),
+    beginPickDestinationOnMap: vi.fn(),
+    setDestinationFromMap: vi.fn(),
+    cancelPickDestination: vi.fn(),
     closeRoute,
     setFollowLive: vi.fn(),
   }),
