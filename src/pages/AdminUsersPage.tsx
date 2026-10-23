@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 
 import { Link } from "react-router-dom";
 
+import { Spinner } from "@/components/ui/Spinner";
 import { toUserMessage } from "@/lib/errorMessages";
 import { roleLabel } from "@/lib/roleLabel";
 
@@ -355,7 +356,7 @@ export function AdminUsersPage() {
 
         {loading ? (
 
-          <p>Cargando…</p>
+          <Spinner />
 
         ) : (
 

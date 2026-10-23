@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useRoute } from "@/hooks/useRoute";
 
 import { useAuth } from "@/app/providers";
+import { Spinner } from "@/components/ui/Spinner";
 
 import { toUserMessage } from "@/lib/errorMessages";
 
@@ -130,7 +131,7 @@ export function ResourceDetailPage() {
 
       <div className="page-panel">
 
-        <p>Cargando ficha…</p>
+        <Spinner label="Cargando ficha…" />
 
       </div>
 

@@ -3,6 +3,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { useAuth, useToast } from "@/app/providers";
+import { Spinner } from "@/components/ui/Spinner";
 
 import { toUserMessage } from "@/lib/errorMessages";
 
@@ -154,7 +155,7 @@ export function ReportIncidentPage() {
 
       <div className="page-panel">
 
-        <p>Cargando…</p>
+        <Spinner />
 
       </div>
 
@@ -302,7 +303,7 @@ export function ReportIncidentPage() {
 
           <button type="submit" className="btn-primary btn-inline" disabled={saving}>
 
-            {saving ? "Enviando…" : "Enviar reporte"}
+            {saving ? "Guardando…" : "Enviar reporte"}
 
           </button>
 

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { useAuth } from "@/app/providers";
+import { Spinner } from "@/components/ui/Spinner";
 import { notifyPendingIncidentsChanged } from "@/hooks/usePendingIncidentCount";
 import { toUserMessage } from "@/lib/errorMessages";
 
@@ -233,7 +234,7 @@ export function AdminIncidentsPage() {
 
 
 
-      {loading ? <p>Cargando…</p> : null}
+      {loading ? <Spinner /> : null}
 
 
 

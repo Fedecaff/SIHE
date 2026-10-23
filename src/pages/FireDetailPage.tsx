@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { Link, useParams } from "react-router-dom";
 
+import { Spinner } from "@/components/ui/Spinner";
 import { toUserMessage } from "@/lib/errorMessages";
 import { formatDateTime } from "@/lib/incidentLabels";
 
@@ -75,7 +76,7 @@ export function FireDetailPage() {
 
       <div className="page-panel">
 
-        <p>Cargando…</p>
+        <Spinner />
 
       </div>
 

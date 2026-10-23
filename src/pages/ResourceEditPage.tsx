@@ -3,6 +3,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { useAuth, useToast } from "@/app/providers";
+import { Spinner } from "@/components/ui/Spinner";
 
 import { toUserMessage } from "@/lib/errorMessages";
 
@@ -146,7 +147,7 @@ export function ResourceEditPage() {
 
       <div className="page-panel">
 
-        <p>Cargando…</p>
+        <Spinner />
 
       </div>
 
