@@ -388,19 +388,17 @@ a {
   background: var(--color-accent);
 }
 
-.btn-header-logout {
-  font: inherit;
+.app-header-logout.btn-toolbar {
   font-size: 12px;
   padding: 4px 10px;
-  border-radius: var(--radius);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.55);
   background: transparent;
   color: #fff;
-  cursor: pointer;
 }
 
-.btn-header-logout:hover {
+.app-header-logout.btn-toolbar:hover {
   background: rgba(255, 255, 255, 0.12);
+  border-color: #fff;
 }
 
 .app-main {
@@ -1162,12 +1160,18 @@ a {
   font-weight: 600;
 }
 
+/* Modificador de ancho: se combina con btn-primary / btn-secondary / btn-toolbar */
 .btn-inline {
   width: auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
+}
+
+.btn-primary.btn-inline,
+.btn-secondary.btn-inline {
+  width: auto;
 }
 
 .field select,

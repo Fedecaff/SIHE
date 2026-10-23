@@ -49,7 +49,7 @@ export function Header({ pendingIncidentCount = 0 }: HeaderProps) {
         ) : null}
         <button
           type="button"
-          className="btn-header-logout"
+          className="btn-toolbar app-header-logout"
           onClick={() => void logout()}
         >
           Salir

@@ -161,7 +161,7 @@ export function AdminCreateFirePage() {
             entra al mapa de calor.
           </p>
         </div>
-        <Link to="/admin" className="btn-toolbar">
+        <Link to="/admin" className="btn-secondary">
           Cancelar
         </Link>
       </div>

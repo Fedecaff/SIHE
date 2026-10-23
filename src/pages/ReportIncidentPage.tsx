@@ -367,7 +367,7 @@ export function ReportIncidentPage() {
 
           </button>
 
-          <Link to={`/recursos/${id}`} className="btn-toolbar">
+          <Link to={`/recursos/${id}`} className="btn-secondary">
 
             Cancelar
 

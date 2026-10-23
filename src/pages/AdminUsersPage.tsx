@@ -576,7 +576,7 @@ export function AdminUsersPage() {
 
                 type="button"
 
-                className="btn-toolbar"
+                className="btn-secondary"
 
                 onClick={() => setEdit(null)}
 

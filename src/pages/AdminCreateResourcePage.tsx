@@ -181,7 +181,7 @@ export function AdminCreateResourcePage() {
 
         </div>
 
-        <Link to="/admin" className="btn-toolbar">
+        <Link to="/admin" className="btn-secondary">
 
           Cancelar
 
