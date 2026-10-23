@@ -29,6 +29,7 @@ import {
   resolveSheet,
   type SheetHeight,
 } from "@/lib/mapPanel";
+import { distanceMeters } from "@/lib/userLocation";
 import { geocodeCityAddress } from "@/services/geocode";
 import {
   fetchFireEventsMap,
@@ -310,6 +311,14 @@ export function MapPage() {
           resource={selected}
           isAdmin={user?.role === "administrador"}
           peek={chrome !== "desktop" && sheetHeight === "peek"}
+          distanceM={
+            userLocation
+              ? distanceMeters(userLocation, {
+                  lat: selected.lat,
+                  lng: selected.lng,
+                })
+              : null
+          }
           onRoute={() => {
             dispatch({ type: "show-route" });
             void startTo({
@@ -374,6 +383,14 @@ export function MapPage() {
           resource={selected}
           isAdmin={user?.role === "administrador"}
           peek={false}
+          distanceM={
+            userLocation
+              ? distanceMeters(userLocation, {
+                  lat: selected.lat,
+                  lng: selected.lng,
+                })
+              : null
+          }
           onRoute={() => {
             dispatch({ type: "show-route" });
             void startTo({

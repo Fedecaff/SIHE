@@ -200,6 +200,48 @@ a {
   order: 99;
 }
 
+.map-resource-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.map-resource-type {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 3px solid;
+  flex: none;
+}
+
+.map-resource-type-label {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.map-resource-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0 0;
+  font-size: 14px;
+}
+
+.map-resource-address,
+.map-resource-distance {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.map-resource-distance {
+  font-weight: 700;
+}
+
 .login-help {
   margin: 16px 0 0;
   text-align: center;
