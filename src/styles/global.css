@@ -93,13 +93,18 @@ a {
   padding: 10px 14px;
   cursor: pointer;
   border: none;
-  background: var(--color-primary);
+  background: var(--btn-primary-bg);
   color: #fff;
   font-weight: 600;
+  transition: background 0.15s ease;
+}
+
+.btn-primary:hover {
+  background: var(--btn-primary-hover);
 }
 
 .btn-primary:disabled {
-  opacity: 0.7;
+  background: var(--btn-primary-disabled);
   cursor: not-allowed;
 }
 
@@ -315,7 +320,7 @@ a {
 }
 
 .mobile-nav-link.is-active {
-  color: var(--color-primary);
+  color: var(--btn-primary-bg);
   font-weight: 600;
 }
 
@@ -630,10 +635,12 @@ a {
   text-decoration: none;
   display: inline-flex;
   align-items: center;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .btn-toolbar:hover {
-  background: #f7f7f7;
+  background: var(--btn-secondary-hover);
+  border-color: var(--border-active);
 }
 
 .map-count {
@@ -675,8 +682,11 @@ a {
 }
 
 .filter-field input:focus-visible,
-.filter-field select:focus-visible {
-  outline: 2px solid var(--color-primary);
+.filter-field select:focus-visible,
+.field input:focus-visible,
+.field select:focus-visible,
+.field textarea:focus-visible {
+  outline: 2px solid var(--border-active);
   outline-offset: 1px;
 }
 
@@ -869,8 +879,13 @@ a {
   cursor: not-allowed;
 }
 
+.btn-toolbar:disabled:hover {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
 .list-link {
-  color: var(--color-primary);
+  color: var(--btn-primary-bg);
   font-weight: 600;
   text-decoration: underline;
 }
@@ -1019,7 +1034,7 @@ a {
 }
 
 .detail-back a {
-  color: var(--color-primary);
+  color: var(--btn-primary-bg);
   font-weight: 600;
 }
 
@@ -1049,7 +1064,7 @@ a {
 }
 
 .form-hint a {
-  color: var(--color-primary);
+  color: var(--btn-primary-bg);
   font-weight: 600;
 }
 
@@ -1232,7 +1247,7 @@ a {
 }
 
 .admin-card:hover {
-  border-color: var(--color-primary);
+  border-color: var(--border-active);
 }
 
 .admin-card h2 {
@@ -1320,7 +1335,7 @@ a {
   width: 100%;
   min-height: var(--btn-map);
   padding: 8px 12px;
-  border: 2px solid var(--color-text);
+  border: 2px solid var(--color-border);
   border-radius: var(--radius);
   background: var(--color-surface);
   color: var(--color-text);
@@ -1343,20 +1358,27 @@ a {
   justify-content: center;
   gap: 2px;
   padding: 4px;
-  border: 2px solid var(--color-text);
+  border: 2px solid var(--color-border);
   border-radius: var(--radius);
   background: #fff;
   color: var(--color-text);
   box-shadow: var(--panel-shadow);
   font-size: 11px;
   font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.map-icon-btn:hover,
+.map-rail-btn:hover,
+.map-dock-toggle:hover {
+  border-color: var(--border-active);
 }
 .map-search-count {
   position: absolute;
   top: calc(100% + 4px);
   right: 0;
   background: #fff;
-  border: 1px solid var(--color-text);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: 2px 8px;
   font-size: 14px;
@@ -1385,7 +1407,11 @@ a {
   width: var(--btn-map);
   height: var(--btn-map);
 }
-.map-rail-btn.is-pressed { background: var(--color-primary); color: #fff; }
+.map-rail-btn.is-pressed {
+  background: var(--btn-primary-bg);
+  border-color: var(--btn-primary-bg);
+  color: #fff;
+}
 .map-rail.is-dimmed { opacity: 0.45; }
 .map-rail-badge {
   position: absolute;
@@ -1415,11 +1441,14 @@ a {
   margin: 0;
   padding: 8px;
   background: #fff;
-  border: 2px solid var(--color-text);
+  border: 2px solid var(--color-border);
   border-radius: var(--radius);
   font-size: 14px;
 }
-.map-toast.is-alert { border-color: var(--color-accent); }
+.map-toast.is-alert {
+  border-color: var(--btn-danger-bg);
+  background: #fef2f2;
+}
 .map-toast button { min-height: var(--touch-min); }
 .map-sheet {
   display: flex;
@@ -1427,7 +1456,7 @@ a {
   overflow: hidden;
   background: #fff;
   color: var(--color-text);
-  border: 2px solid var(--color-text);
+  border: 2px solid var(--color-border);
 }
 .map-sheet-scroll { overflow: auto; min-height: 0; }
 .map-sheet-head h2 { margin: 0; font-size: 16px; }
@@ -1443,7 +1472,7 @@ a {
   width: 40px;
   height: 4px;
   border-radius: 99px;
-  background: var(--color-text);
+  background: var(--color-border);
 }
 .map-sheet-back {
   min-height: var(--touch-min);
@@ -1451,17 +1480,31 @@ a {
   text-align: left;
   background: transparent;
   border: 0;
-  color: var(--color-primary);
+  color: var(--btn-primary-bg);
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+.map-sheet-back:hover {
+  opacity: 0.8;
 }
 .map-chip {
-  border: 2px solid var(--color-text);
+  border: 2px solid var(--color-border);
   background: #fff;
   color: var(--color-text);
   border-radius: var(--radius);
   padding: 8px 10px;
   font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
-.map-chip.is-on { background: var(--color-primary); color: #fff; }
+.map-chip:hover:not(.is-on) {
+  border-color: var(--border-active);
+}
+.map-chip.is-on {
+  background: var(--btn-primary-bg);
+  border-color: var(--btn-primary-bg);
+  color: #fff;
+}
 .map-chips { display: flex; flex-wrap: wrap; gap: var(--map-gap); }
 .map-chip-set { border: 0; margin: 8px 0; padding: 0; }
 .map-chip-set legend { font-weight: 700; font-size: 16px; }
@@ -1501,7 +1544,11 @@ a {
   overflow: auto;
 }
 .map-dock-tabs { display: flex; gap: 4px; padding: 8px; }
-.map-dock-tabs button.is-on { background: var(--color-primary); color: #fff; }
+.map-dock-tabs button.is-on {
+  background: var(--btn-primary-bg);
+  border-color: var(--btn-primary-bg);
+  color: #fff;
+}
 .map-dock-toggle {
   width: var(--btn-map);
   height: var(--btn-map);
@@ -1539,8 +1586,10 @@ a {
 .map-dock-toggle:focus-visible,
 .map-rail-btn:focus-visible,
 .map-chip:focus-visible,
-.map-search input:focus-visible {
-  outline: 3px solid #0b5cab;
+.map-search input:focus-visible,
+.btn-primary:focus-visible,
+.btn-toolbar:focus-visible {
+  outline: 3px solid var(--border-active);
   outline-offset: 2px;
 }
 @media (prefers-reduced-motion: reduce) {
