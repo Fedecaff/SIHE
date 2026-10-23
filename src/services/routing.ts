@@ -69,7 +69,7 @@ type OsrmRouteResponse = {
   }>;
 };
 
-function userMessageForOsrm(code: string, status?: number, distanceKm?: number): string {
+function userMessageForOsrm(code: string, status?: number): string {
   if (status === 429 || code === "TooManyRequests") {
     return "El servidor de rutas está ocupado. Probá en unos segundos.";
   }
@@ -78,9 +78,6 @@ function userMessageForOsrm(code: string, status?: number, distanceKm?: number):
   }
   if (code === "InvalidUrl" || code === "InvalidValue") {
     return "No se pudo armar la ruta con esos puntos.";
-  }
-  if (distanceKm && distanceKm > 300) {
-    return `Esta ruta es muy larga (${Math.round(distanceKm)} km). Verificá el destino.`;
   }
   return "No se pudo calcular la ruta.";
 }
@@ -141,16 +138,14 @@ export class OSRMProvider implements RoutingProvider {
     }
 
     const code = body.code ?? (response.ok ? "Ok" : "Error");
-    const route = body.routes?.[0];
-    const distanceKm = route ? route.distance / 1000 : undefined;
-    
     if (!response.ok || code !== "Ok") {
       throw new RoutingError(
-        userMessageForOsrm(code, response.status, distanceKm),
+        userMessageForOsrm(code, response.status),
         code,
       );
     }
 
+    const route = body.routes?.[0];
     const coords = route?.geometry?.coordinates;
     if (!route || !coords?.length) {
       throw new RoutingError("No hay una ruta por calle hasta ese punto.", "NoRoute");

@@ -1,22 +1,31 @@
-import { createElement, useEffect } from "react";
-import { renderToStaticMarkup } from "react-dom/server";
+import { useEffect } from "react";
 import { Marker, Polyline, Popup, useMap, useMapEvents } from "react-leaflet";
-import { Circle, Flag } from "lucide-react";
 import L from "leaflet";
 import type { LatLng } from "@/lib/userLocation";
 import { typeLabel } from "@/lib/resourceLabels";
 import type { RouteTarget } from "@/services/routing";
 
+const iconPaths: Record<string, string> = {
+  Circle: '<circle cx="12" cy="12" r="10"/>',
+  Flag: '<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/>',
+};
+
+function createSvgIcon(iconName: string, size: number, strokeWidth: number): string {
+  const path = iconPaths[iconName];
+  if (!path) return "";
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
+}
+
 const originIcon = L.divIcon({
   className: "route-origin-marker",
-  html: `<div class="map-icon-circle map-icon-origin">${renderToStaticMarkup(createElement(Circle, { size: 16, strokeWidth: 3 }))}</div>`,
+  html: `<div class="map-icon-circle map-icon-origin">${createSvgIcon("Circle", 16, 3)}</div>`,
   iconSize: [24, 24],
   iconAnchor: [12, 12],
 });
 
 const destIcon = L.divIcon({
   className: "route-dest-marker",
-  html: `<div class="map-icon-pin map-icon-dest">${renderToStaticMarkup(createElement(Flag, { size: 18, strokeWidth: 2.5 }))}</div>`,
+  html: `<div class="map-icon-pin map-icon-dest">${createSvgIcon("Flag", 18, 2.5)}</div>`,
   iconSize: [24, 24],
   iconAnchor: [12, 24],
 });

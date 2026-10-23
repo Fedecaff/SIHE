@@ -1,17 +1,26 @@
-import { createElement } from "react";
-import { Droplet, Flame, Container } from "lucide-react";
-import { renderToStaticMarkup } from "react-dom/server";
 import { statusColor, statusLabel, typeColor, typeLabel } from "@/lib/resourceLabels";
 import type { ResourceStatus, ResourceType } from "@/types/sihe";
 
-function getLucideIcon(type: ResourceType) {
+const iconPaths: Record<string, string> = {
+  Flame: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+  Droplet: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>',
+  Container: '<path d="M22 7.7c0-.6-.4-1.2-.7-1.5L12 .4 2.7 6.2c-.3.3-.7.8-.7 1.5v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2zM9.3 17.7v-3.4"/><path d="M14.7 17.7v-3.4"/>',
+};
+
+function createSvgIcon(iconName: string, size: number, color: string, strokeWidth: number): string {
+  const path = iconPaths[iconName];
+  if (!path) return "";
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
+}
+
+function getIconName(type: ResourceType): string {
   switch (type) {
     case "espejo":
-      return Droplet;
+      return "Droplet";
     case "tanque":
-      return Container;
+      return "Container";
     default:
-      return Flame;
+      return "Flame";
   }
 }
 
@@ -60,26 +69,21 @@ export function MapLegend({
         <>
       <h2>Tipo</h2>
       <ul>
-        {types.map((type) => {
-          const IconComponent = getLucideIcon(type);
-          return (
-            <li key={type}>
-              <span
-                className="map-legend-icon"
-                style={{
-                  background: typeColor(type),
-                  borderColor: statusColor("operativo"),
-                }}
-                dangerouslySetInnerHTML={{
-                  __html: renderToStaticMarkup(
-                    createElement(IconComponent, { size: 14, color: "#fff", strokeWidth: 2.5 })
-                  ),
-                }}
-              />
-              {typeLabel(type)}
-            </li>
-          );
-        })}
+        {types.map((type) => (
+          <li key={type}>
+            <span
+              className="map-legend-icon"
+              style={{
+                background: typeColor(type),
+                borderColor: statusColor("operativo"),
+              }}
+              dangerouslySetInnerHTML={{
+                __html: createSvgIcon(getIconName(type), 14, "#fff", 2.5),
+              }}
+            />
+            {typeLabel(type)}
+          </li>
+        ))}
       </ul>
         </>
       ) : null}

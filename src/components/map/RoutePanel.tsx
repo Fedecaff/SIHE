@@ -78,18 +78,10 @@ export function RoutePanel() {
           <p className="route-panel-kicker">Cómo llegar</p>
           <h2>{title}</h2>
           {route ? (
-            <>
-              <p className="muted">
-                {formatRouteDistance(route.distanceM)} ·{" "}
-                {formatRouteDuration(route.durationS)}
-              </p>
-              {route.distanceM > 300000 ? (
-                <p className="route-warning" role="alert">
-                  Esta ruta es muy larga ({Math.round(route.distanceM / 1000)} km).
-                  Verificá que el destino sea el correcto.
-                </p>
-              ) : null}
-            </>
+            <p className="muted">
+              {formatRouteDistance(route.distanceM)} ·{" "}
+              {formatRouteDuration(route.durationS)}
+            </p>
           ) : loading ? (
             <p className="muted">Calculando ruta…</p>
           ) : null}
@@ -107,6 +99,13 @@ export function RoutePanel() {
       {error ? (
         <p className="map-error route-panel-error" role="alert">
           {error}
+        </p>
+      ) : null}
+
+      {route && route.distanceM > 300000 ? (
+        <p className="route-warning" role="status">
+          Ruta larga: {Math.round(route.distanceM / 1000)} km, aprox.{" "}
+          {Math.floor(route.durationS / 3600)} h {Math.floor((route.durationS % 3600) / 60)} min
         </p>
       ) : null}
 

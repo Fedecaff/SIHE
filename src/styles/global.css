@@ -575,7 +575,7 @@ a {
 .map-icon-pulse {
   width: 24px;
   height: 24px;
-  background: #0ea5e9;
+  background: var(--icon-user-bg);
   color: #fff;
   animation: map-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
@@ -590,19 +590,19 @@ a {
 }
 
 .map-icon-address {
-  color: #2563eb;
+  color: var(--icon-address-color);
   filter: drop-shadow(0 0 2px #fff);
 }
 
 .map-icon-origin {
   width: 24px;
   height: 24px;
-  background: #22c55e;
+  background: var(--icon-origin-bg);
   color: #fff;
 }
 
 .map-icon-dest {
-  color: #dc2626;
+  color: var(--icon-dest-color);
   filter: drop-shadow(0 0 2px #fff);
 }
 
@@ -985,29 +985,29 @@ a {
 }
 
 .marker-cluster-small {
-  background-color: rgba(59, 130, 246, 0.4);
+  background-color: var(--cluster-small-bg);
 }
 
 .marker-cluster-small div {
-  background-color: var(--color-primary);
+  background-color: var(--cluster-small-fg);
   color: #fff;
 }
 
 .marker-cluster-medium {
-  background-color: rgba(249, 115, 22, 0.4);
+  background-color: var(--cluster-medium-bg);
 }
 
 .marker-cluster-medium div {
-  background-color: #f97316;
+  background-color: var(--cluster-medium-fg);
   color: #fff;
 }
 
 .marker-cluster-large {
-  background-color: rgba(239, 68, 68, 0.4);
+  background-color: var(--cluster-large-bg);
 }
 
 .marker-cluster-large div {
-  background-color: #ef4444;
+  background-color: var(--cluster-large-fg);
   color: #fff;
 }
 

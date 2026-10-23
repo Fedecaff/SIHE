@@ -137,22 +137,27 @@ type Props = {
 
 };
 
+const iconPaths: Record<string, string> = {
+  MapPin: '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+  User: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+};
 
-
-import { createElement } from "react";
-import { renderToStaticMarkup } from "react-dom/server";
-import { MapPinned, User } from "lucide-react";
+function createSvgIcon(iconName: string, size: number, strokeWidth: number): string {
+  const path = iconPaths[iconName];
+  if (!path) return "";
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
+}
 
 const addressIcon = L.divIcon({
   className: "address-marker",
-  html: `<div class="map-icon-pin map-icon-address">${renderToStaticMarkup(createElement(MapPinned, { size: 18, strokeWidth: 2.5 }))}</div>`,
+  html: `<div class="map-icon-pin map-icon-address">${createSvgIcon("MapPin", 18, 2.5)}</div>`,
   iconSize: [24, 24],
   iconAnchor: [12, 24],
 });
 
 const userIcon = L.divIcon({
   className: "user-marker",
-  html: `<div class="map-icon-pulse">${renderToStaticMarkup(createElement(User, { size: 16, strokeWidth: 3 }))}</div>`,
+  html: `<div class="map-icon-pulse">${createSvgIcon("User", 16, 3)}</div>`,
   iconSize: [24, 24],
   iconAnchor: [12, 12],
 });
