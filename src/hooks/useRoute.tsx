@@ -33,6 +33,7 @@ type RouteState = {
   needsOrigin: boolean;
   pickingOriginOnMap: boolean;
   pickingDestinationOnMap: boolean;
+  markedPoint: LatLng | null;
   followLive: boolean;
   startTo: (target: RouteTarget) => Promise<void>;
   setOriginFromAddress: (query: string) => Promise<void>;
@@ -40,6 +41,8 @@ type RouteState = {
   setOriginFromMap: (point: LatLng) => void;
   beginPickDestinationOnMap: () => void;
   setDestinationFromMap: (point: LatLng) => void;
+  startRouteToMarkedPoint: () => Promise<void>;
+  clearMarkedPoint: () => void;
   cancelPickDestination: () => void;
   closeRoute: () => void;
   setFollowLive: (value: boolean) => void;
@@ -66,6 +69,7 @@ export function RouteProvider({
   const [needsOrigin, setNeedsOrigin] = useState(false);
   const [pickingOriginOnMap, setPickingOriginOnMap] = useState(false);
   const [pickingDestinationOnMap, setPickingDestinationOnMap] = useState(false);
+  const [markedPoint, setMarkedPoint] = useState<LatLng | null>(null);
   const [followLive, setFollowLiveState] = useState(false);
 
   const abortRef = useRef<AbortController | null>(null);
@@ -174,22 +178,33 @@ export function RouteProvider({
     setPickingDestinationOnMap(true);
     setDestination(null);
     setRoute(null);
+    setMarkedPoint(null);
     setError(null);
   }, []);
 
-  const setDestinationFromMap = useCallback(
-    (point: LatLng) => {
-      const target: RouteTarget = {
-        lat: point.lat,
-        lng: point.lng,
-        label: "Punto marcado",
-        kind: "punto",
-      };
-      setPickingDestinationOnMap(false);
-      void startTo(target);
-    },
-    [startTo],
-  );
+  const setDestinationFromMap = useCallback((point: LatLng) => {
+    setMarkedPoint(point);
+    setPickingDestinationOnMap(false);
+    setError(null);
+  }, []);
+
+  const startRouteToMarkedPoint = useCallback(async () => {
+    if (!markedPoint) return;
+    const target: RouteTarget = {
+      lat: markedPoint.lat,
+      lng: markedPoint.lng,
+      label: "Punto marcado",
+      kind: "punto",
+    };
+    setMarkedPoint(null);
+    await startTo(target);
+  }, [markedPoint, startTo]);
+
+  const clearMarkedPoint = useCallback(() => {
+    setMarkedPoint(null);
+    setPickingDestinationOnMap(false);
+    setError(null);
+  }, []);
 
   const cancelPickDestination = useCallback(() => {
     setPickingDestinationOnMap(false);
@@ -207,6 +222,7 @@ export function RouteProvider({
     setNeedsOrigin(false);
     setPickingOriginOnMap(false);
     setPickingDestinationOnMap(false);
+    setMarkedPoint(null);
     routedOriginRef.current = null;
   }, [cancelInFlight]);
 
@@ -241,6 +257,7 @@ export function RouteProvider({
       needsOrigin,
       pickingOriginOnMap,
       pickingDestinationOnMap,
+      markedPoint,
       followLive,
       startTo,
       setOriginFromAddress,
@@ -248,6 +265,8 @@ export function RouteProvider({
       setOriginFromMap,
       beginPickDestinationOnMap,
       setDestinationFromMap,
+      startRouteToMarkedPoint,
+      clearMarkedPoint,
       cancelPickDestination,
       closeRoute,
       setFollowLive,
@@ -261,6 +280,7 @@ export function RouteProvider({
       needsOrigin,
       pickingOriginOnMap,
       pickingDestinationOnMap,
+      markedPoint,
       followLive,
       startTo,
       setOriginFromAddress,
@@ -268,6 +288,8 @@ export function RouteProvider({
       setOriginFromMap,
       beginPickDestinationOnMap,
       setDestinationFromMap,
+      startRouteToMarkedPoint,
+      clearMarkedPoint,
       cancelPickDestination,
       closeRoute,
       setFollowLive,

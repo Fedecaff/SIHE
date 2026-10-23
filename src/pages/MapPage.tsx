@@ -47,6 +47,7 @@ export function MapPage() {
     route,
     pickingOriginOnMap,
     pickingDestinationOnMap,
+    markedPoint,
     startTo,
     setOriginFromMap,
     beginPickDestinationOnMap,
@@ -93,7 +94,7 @@ export function MapPage() {
   }, [panel.tool]);
 
   const view = resolveSheet(panel, {
-    routeActive: Boolean(destination),
+    routeActive: Boolean(destination) || Boolean(markedPoint),
     pickingOrigin: pickingOriginOnMap,
     pickingDestination: pickingDestinationOnMap,
   });
@@ -557,6 +558,7 @@ export function MapPage() {
             routeGeometry={route?.geometry ?? []}
             routeOrigin={origin}
             routeDestination={destination}
+            markedPoint={markedPoint}
             pickingOrigin={pickingOriginOnMap}
             onPickOrigin={setOriginFromMap}
             pickingDestination={pickingDestinationOnMap}

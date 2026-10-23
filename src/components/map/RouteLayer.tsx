@@ -99,6 +99,7 @@ type Props = {
   geometry: LatLng[];
   origin: LatLng | null;
   destination: RouteTarget | null;
+  markedPoint: LatLng | null;
   pickingOrigin: boolean;
   onPickOrigin: (point: LatLng) => void;
   pickingDestination: boolean;
@@ -110,6 +111,7 @@ export function RouteLayer({
   geometry,
   origin,
   destination,
+  markedPoint,
   pickingOrigin,
   onPickOrigin,
   pickingDestination,
@@ -140,6 +142,12 @@ export function RouteLayer({
           icon={destIcon}
         >
           <Popup>{destinationCaption(destination)}</Popup>
+        </Marker>
+      ) : markedPoint ? (
+        <Marker position={[markedPoint.lat, markedPoint.lng]} icon={destIcon}>
+          <Popup>
+            {markedPoint.lat.toFixed(5)}, {markedPoint.lng.toFixed(5)}
+          </Popup>
         </Marker>
       ) : null}
     </>

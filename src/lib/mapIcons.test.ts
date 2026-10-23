@@ -45,18 +45,20 @@ describe("mapIcons", () => {
     expect(tanqueSvg).not.toContain(flamePath);
   });
 
-  it("hidrante usa el ícono de hidrante", () => {
+  it("hidrante usa el ícono de hidrante (Tabler FireHydrant)", () => {
     const hidranteSvg = resourceGlyphSvg("hidrante");
-    expect(hidranteSvg).toContain("M7 12V7h2v5");
+    expect(hidranteSvg).toContain("M5 21h14");
+    expect(hidranteSvg).toContain("M17 21v-5h1a1 1 0 0 0 1 -1v-2");
   });
 
-  it("espejo usa el ícono de gota", () => {
+  it("espejo usa el ícono de gota (Lucide Droplet)", () => {
     const espejoSvg = resourceGlyphSvg("espejo");
-    expect(espejoSvg).toContain("M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z");
+    expect(espejoSvg).toContain("M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5");
   });
 
-  it("tanque usa el ícono de tanque elevado", () => {
+  it("tanque usa el ícono de tanque elevado (IconOven WaterTower)", () => {
     const tanqueSvg = resourceGlyphSvg("tanque");
-    expect(tanqueSvg).toContain('ellipse cx="12" cy="19"');
+    expect(tanqueSvg).toContain('rect width="14.5" height="8.5"');
+    expect(tanqueSvg).toContain("M4.75 7h14.5");
   });
 });

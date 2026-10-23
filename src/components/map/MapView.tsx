@@ -101,6 +101,8 @@ type Props = {
 
   routeDestination?: RouteTarget | null;
 
+  markedPoint?: LatLng | null;
+
   pickingOrigin?: boolean;
 
   onPickOrigin?: (point: LatLng) => void;
@@ -412,6 +414,8 @@ export function MapView({
 
   routeDestination = null,
 
+  markedPoint = null,
+
   pickingOrigin = false,
 
   onPickOrigin,
@@ -519,6 +523,8 @@ export function MapView({
         origin={routeOrigin}
 
         destination={routeDestination}
+
+        markedPoint={markedPoint}
 
         pickingOrigin={pickingOrigin}
 
