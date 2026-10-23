@@ -10,6 +10,16 @@
   --color-muted: #3f3f46;
   --color-placeholder: #52525b;
   --color-warning-bg: #fff3cd;
+
+  /* Paleta de botones y controles interactivos */
+  --btn-primary-bg: #1e67b5;
+  --btn-primary-hover: #1a5a9d;
+  --btn-primary-disabled: #94a3b8;
+  --btn-secondary-hover: #f3f4f6;
+  --btn-danger-bg: #dc2626;
+  --btn-danger-hover: #b91c1c;
+  --border-active: #1e67b5;
+
   --radius: 12px;
   --radius-sm: 8px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
