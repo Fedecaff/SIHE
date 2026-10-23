@@ -4,6 +4,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { useAuth, useToast } from "@/app/providers";
 
+import { toUserMessage } from "@/lib/errorMessages";
+
 import {
 
   INCIDENT_TYPE_OPTIONS,
@@ -78,7 +80,7 @@ export function ReportIncidentPage() {
 
         if (!cancelled) {
 
-          setError(err instanceof Error ? err.message : "Error al cargar");
+          setError(toUserMessage(err, "Error al cargar"));
 
         }
 
@@ -134,7 +136,7 @@ export function ReportIncidentPage() {
 
     } catch (err: unknown) {
 
-      setError(err instanceof Error ? err.message : "No se pudo enviar");
+      setError(toUserMessage(err, "No se pudo enviar"));
 
     } finally {
 

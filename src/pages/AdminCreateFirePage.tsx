@@ -8,6 +8,7 @@ import {
 } from "react-leaflet";
 import L from "leaflet";
 import { useToast } from "@/app/providers";
+import { toUserMessage } from "@/lib/errorMessages";
 import { CATAMARCA_CENTER, MAP_DEFAULT_ZOOM } from "@/lib/mapConstants";
 import { formatMapCoords } from "@/services/geocode";
 import {
@@ -85,9 +86,7 @@ export function AdminCreateFirePage() {
       showToast("Incendio registrado");
       navigate(`/incendios/${id}`);
     } catch (err: unknown) {
-      setError(
-        err instanceof Error ? err.message : "No se pudo registrar el incendio",
-      );
+      setError(toUserMessage(err, "No se pudo registrar el incendio"));
     } finally {
       setSaving(false);
     }

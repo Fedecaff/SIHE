@@ -4,6 +4,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { useAuth, useToast } from "@/app/providers";
 
+import { toUserMessage } from "@/lib/errorMessages";
+
 import { RESOURCE_STATUS_OPTIONS } from "@/lib/incidentLabels";
 
 import { typeLabel } from "@/lib/resourceLabels";
@@ -74,7 +76,7 @@ export function ResourceEditPage() {
 
         if (!cancelled) {
 
-          setError(err instanceof Error ? err.message : "Error al cargar");
+          setError(toUserMessage(err, "Error al cargar"));
 
         }
 
@@ -126,7 +128,7 @@ export function ResourceEditPage() {
 
     } catch (err: unknown) {
 
-      setError(err instanceof Error ? err.message : "No se pudo guardar");
+      setError(toUserMessage(err, "No se pudo guardar"));
 
     } finally {
 

@@ -22,6 +22,7 @@ import {
   OVERLAY_VIIRS,
   OVERLAY_WMS,
 } from "@/lib/mapConstants";
+import { toUserMessage } from "@/lib/errorMessages";
 import {
   initialMapPanel,
   mapPanelReducer,
@@ -138,7 +139,7 @@ export function MapPage() {
       })
       .catch((err: unknown) => {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : "No se pudo cargar el mapa");
+          setError(toUserMessage(err, "No se pudo cargar el mapa"));
         }
       })
       .finally(() => {
@@ -186,7 +187,7 @@ export function MapPage() {
       }));
       dispatch({ type: "select-address" });
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "No se pudo ubicar la dirección");
+      setError(toUserMessage(err, "No se pudo ubicar la dirección"));
     } finally {
       setAddressSearching(false);
     }

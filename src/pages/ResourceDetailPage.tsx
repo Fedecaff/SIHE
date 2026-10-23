@@ -6,6 +6,8 @@ import { useRoute } from "@/hooks/useRoute";
 
 import { useAuth } from "@/app/providers";
 
+import { toUserMessage } from "@/lib/errorMessages";
+
 import {
 
   formatDateTime,
@@ -100,7 +102,7 @@ export function ResourceDetailPage() {
 
         if (!cancelled) {
 
-          setError(err instanceof Error ? err.message : "Error al cargar");
+          setError(toUserMessage(err, "Error al cargar"));
 
         }
 

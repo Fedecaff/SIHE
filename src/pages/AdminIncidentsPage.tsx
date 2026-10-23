@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 import { useAuth } from "@/app/providers";
 import { notifyPendingIncidentsChanged } from "@/hooks/usePendingIncidentCount";
+import { toUserMessage } from "@/lib/errorMessages";
 
 import {
 
@@ -67,7 +68,7 @@ export function AdminIncidentsPage() {
 
     } catch (err: unknown) {
 
-      setError(err instanceof Error ? err.message : "Error al cargar");
+      setError(toUserMessage(err, "Error al cargar"));
 
     } finally {
 
@@ -132,7 +133,7 @@ export function AdminIncidentsPage() {
 
     } catch (err: unknown) {
 
-      setError(err instanceof Error ? err.message : "No se pudo resolver");
+      setError(toUserMessage(err, "No se pudo resolver"));
 
     } finally {
 

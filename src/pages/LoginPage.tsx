@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/app/providers";
 import { homePathForRole } from "@/lib/authSession";
+import { toUserMessage } from "@/lib/errorMessages";
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -20,9 +21,7 @@ export function LoginPage() {
       const profile = await login(email, password, rememberSession);
       navigate(homePathForRole(profile.role), { replace: true });
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "No se pudo iniciar sesión.",
-      );
+      setError(toUserMessage(err, "No se pudo iniciar sesión."));
     } finally {
       setSubmitting(false);
     }

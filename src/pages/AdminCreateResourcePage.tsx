@@ -16,6 +16,7 @@ import {
 
 import L from "leaflet";
 
+import { toUserMessage } from "@/lib/errorMessages";
 import { CATAMARCA_CENTER, MAP_DEFAULT_ZOOM } from "@/lib/mapConstants";
 
 import { RESOURCE_STATUS_OPTIONS } from "@/lib/incidentLabels";
@@ -149,7 +150,7 @@ export function AdminCreateResourcePage() {
 
     } catch (err: unknown) {
 
-      setError(err instanceof Error ? err.message : "No se pudo crear");
+      setError(toUserMessage(err, "No se pudo crear"));
 
     } finally {
 

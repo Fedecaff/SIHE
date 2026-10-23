@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
+import { toUserMessage } from "@/lib/errorMessages";
 import { countPendingIncidents } from "@/services/resources";
 
 
@@ -30,7 +31,7 @@ export function AdminPage() {
 
         if (!cancelled) {
 
-          setError(err instanceof Error ? err.message : "Error al cargar");
+          setError(toUserMessage(err, "Error al cargar"));
 
         }
 

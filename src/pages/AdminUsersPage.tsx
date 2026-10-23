@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 
 import { Link } from "react-router-dom";
 
+import { toUserMessage } from "@/lib/errorMessages";
 import { roleLabel } from "@/lib/roleLabel";
 
 import {
@@ -84,7 +85,7 @@ export function AdminUsersPage() {
 
         if (!cancelled) {
 
-          setError(err instanceof Error ? err.message : "Error al cargar");
+          setError(toUserMessage(err, "Error al cargar"));
 
         }
 
@@ -148,7 +149,7 @@ export function AdminUsersPage() {
 
     } catch (err: unknown) {
 
-      setError(err instanceof Error ? err.message : "No se pudo crear");
+      setError(toUserMessage(err, "No se pudo crear"));
 
     } finally {
 
@@ -184,7 +185,7 @@ export function AdminUsersPage() {
 
     } catch (err: unknown) {
 
-      setError(err instanceof Error ? err.message : "No se pudo guardar");
+      setError(toUserMessage(err, "No se pudo guardar"));
 
     } finally {
 
