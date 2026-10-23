@@ -31,7 +31,7 @@ vi.mock("@/lib/userLocation", () => ({
 }));
 
 describe("useRoute", () => {
-  it("al activar modo marcar punto y tocar el mapa se llama a setDestinationFromMap", async () => {
+  it("al tocar el mapa en modo marcar punto se coloca el markedPoint sin iniciar ruta", async () => {
     const { result } = renderHook(() => useRoute(), {
       wrapper: ({ children }) => <RouteProvider>{children}</RouteProvider>,
     });
@@ -42,12 +42,38 @@ describe("useRoute", () => {
 
     expect(result.current.pickingDestinationOnMap).toBe(true);
     expect(result.current.destination).toBeNull();
+    expect(result.current.markedPoint).toBeNull();
 
-    await act(async () => {
+    act(() => {
       result.current.setDestinationFromMap({ lat: -28.47, lng: -65.78 });
     });
 
     expect(result.current.pickingDestinationOnMap).toBe(false);
+    expect(result.current.markedPoint).toEqual({ lat: -28.47, lng: -65.78 });
+    expect(result.current.destination).toBeNull();
+    expect(result.current.route).toBeNull();
+  });
+
+  it("al presionar 'Cómo llegar' se inicia la ruta con kind 'punto'", async () => {
+    const { result } = renderHook(() => useRoute(), {
+      wrapper: ({ children }) => <RouteProvider>{children}</RouteProvider>,
+    });
+
+    act(() => {
+      result.current.beginPickDestinationOnMap();
+    });
+
+    act(() => {
+      result.current.setDestinationFromMap({ lat: -28.47, lng: -65.78 });
+    });
+
+    expect(result.current.markedPoint).toEqual({ lat: -28.47, lng: -65.78 });
+
+    await act(async () => {
+      await result.current.startRouteToMarkedPoint();
+    });
+
+    expect(result.current.markedPoint).toBeNull();
     expect(result.current.destination).toEqual({
       lat: -28.47,
       lng: -65.78,
@@ -56,16 +82,26 @@ describe("useRoute", () => {
     });
   });
 
-  it("con destino marcado la ruta tiene kind 'punto'", async () => {
+  it("'Quitar punto' limpia el markedPoint", async () => {
     const { result } = renderHook(() => useRoute(), {
       wrapper: ({ children }) => <RouteProvider>{children}</RouteProvider>,
     });
 
-    await act(async () => {
+    act(() => {
+      result.current.beginPickDestinationOnMap();
+    });
+
+    act(() => {
       result.current.setDestinationFromMap({ lat: -28.47, lng: -65.78 });
     });
 
-    expect(result.current.destination?.kind).toBe("punto");
-    expect(result.current.destination?.label).toBe("Punto marcado");
+    expect(result.current.markedPoint).toEqual({ lat: -28.47, lng: -65.78 });
+
+    act(() => {
+      result.current.clearMarkedPoint();
+    });
+
+    expect(result.current.markedPoint).toBeNull();
+    expect(result.current.destination).toBeNull();
   });
 });

@@ -12,9 +12,12 @@ export function RoutePanel() {
     needsOrigin,
     pickingOriginOnMap,
     pickingDestinationOnMap,
+    markedPoint,
     followLive,
     setOriginFromAddress,
     beginPickOriginOnMap,
+    startRouteToMarkedPoint,
+    clearMarkedPoint,
     closeRoute,
     setFollowLive,
     cancelPickDestination,
@@ -22,7 +25,7 @@ export function RoutePanel() {
   const [originQuery, setOriginQuery] = useState("");
   const [originSearching, setOriginSearching] = useState(false);
 
-  if (!destination && !pickingDestinationOnMap) return null;
+  if (!destination && !pickingDestinationOnMap && !markedPoint) return null;
   
   if (pickingDestinationOnMap) {
     return (
@@ -44,6 +47,37 @@ export function RoutePanel() {
         <p className="muted">
           El punto marcado se usará como destino para calcular cómo llegar.
         </p>
+      </section>
+    );
+  }
+
+  if (markedPoint) {
+    return (
+      <section className="route-panel" aria-label="Punto marcado" aria-live="polite">
+        <div className="route-panel-head">
+          <div>
+            <p className="route-panel-kicker">Punto marcado</p>
+            <h2>
+              {markedPoint.lat.toFixed(5)}, {markedPoint.lng.toFixed(5)}
+            </h2>
+          </div>
+        </div>
+        <div className="map-sheet-actions">
+          <button
+            type="button"
+            className="btn-primary btn-inline"
+            onClick={() => void startRouteToMarkedPoint()}
+          >
+            Cómo llegar
+          </button>
+          <button
+            type="button"
+            className="btn-toolbar"
+            onClick={clearMarkedPoint}
+          >
+            Quitar punto
+          </button>
+        </div>
       </section>
     );
   }
