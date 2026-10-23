@@ -39,13 +39,10 @@ export function MapResourceCard({
         />
         <div>
           <p className="map-resource-type-label">{typeLabel(resource.type)}</p>
-          <p className="map-resource-status">
-            <span
-              className="map-legend-dot"
-              style={{ background: statusColor(resource.status) }}
-              aria-hidden="true"
-            />
-            <span>{statusLabel(resource.status)}</span>
+          <p
+            className={`map-resource-status-chip status-${resource.status}`}
+          >
+            {statusLabel(resource.status)}
           </p>
         </div>
       </div>
