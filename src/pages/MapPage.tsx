@@ -46,8 +46,12 @@ export function MapPage() {
     origin,
     route,
     pickingOriginOnMap,
+    pickingDestinationOnMap,
     startTo,
     setOriginFromMap,
+    beginPickDestinationOnMap,
+    setDestinationFromMap,
+    cancelPickDestination,
   } = useRoute();
   const satellite = useSatelliteLayers();
   const { chrome, wide, zoom } = useMapChrome();
@@ -91,6 +95,7 @@ export function MapPage() {
   const view = resolveSheet(panel, {
     routeActive: Boolean(destination),
     pickingOrigin: pickingOriginOnMap,
+    pickingDestination: pickingDestinationOnMap,
   });
 
   function closeSheet() {
@@ -554,6 +559,8 @@ export function MapPage() {
             routeDestination={destination}
             pickingOrigin={pickingOriginOnMap}
             onPickOrigin={setOriginFromMap}
+            pickingDestination={pickingDestinationOnMap}
+            onPickDestination={setDestinationFromMap}
             addressLabel={addressTarget?.label}
             baseLayer={satellite.baseLayer}
             overlays={satellite.overlays}
@@ -570,9 +577,18 @@ export function MapPage() {
             activeOverlays={activeOverlays}
             showZoom={zoom}
             dimmed={pickingOriginOnMap}
+            pickingPoint={pickingDestinationOnMap}
             onToggleFilters={() => dispatch({ type: "toggle-tool", panel: "filtros" })}
             onToggleLayers={() => dispatch({ type: "toggle-tool", panel: "capas" })}
             onToggleLegend={() => dispatch({ type: "toggle-tool", panel: "leyenda" })}
+            onTogglePickPoint={() => {
+              if (pickingDestinationOnMap) {
+                cancelPickDestination();
+              } else {
+                beginPickDestinationOnMap();
+                dispatch({ type: "escape" });
+              }
+            }}
             onLocate={() => setLocateToken((n) => n + 1)}
             onHome={() => {
               setAddressTarget(null);

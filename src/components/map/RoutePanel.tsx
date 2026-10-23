@@ -11,15 +11,43 @@ export function RoutePanel() {
     error,
     needsOrigin,
     pickingOriginOnMap,
+    pickingDestinationOnMap,
     followLive,
     setOriginFromAddress,
     beginPickOriginOnMap,
     closeRoute,
     setFollowLive,
+    cancelPickDestination,
   } = useRoute();
   const [originQuery, setOriginQuery] = useState("");
   const [originSearching, setOriginSearching] = useState(false);
 
+  if (!destination && !pickingDestinationOnMap) return null;
+  
+  if (pickingDestinationOnMap) {
+    return (
+      <section className="route-panel" aria-label="Marcar punto" aria-live="polite">
+        <div className="route-panel-head">
+          <div>
+            <p className="route-panel-kicker">Marcar punto en el mapa</p>
+            <h2>Tocá el mapa para marcar el destino</h2>
+          </div>
+          <button
+            type="button"
+            className="btn-toolbar"
+            aria-label="Cancelar"
+            onClick={cancelPickDestination}
+          >
+            Cancelar
+          </button>
+        </div>
+        <p className="muted">
+          El punto marcado se usará como destino para calcular cómo llegar.
+        </p>
+      </section>
+    );
+  }
+  
   if (!destination) return null;
 
   const title =
@@ -71,6 +99,13 @@ export function RoutePanel() {
       {error ? (
         <p className="map-error route-panel-error" role="alert">
           {error}
+        </p>
+      ) : null}
+
+      {route && route.distanceM > 300000 ? (
+        <p className="route-warning" role="status">
+          Ruta larga: {Math.round(route.distanceM / 1000)} km, aprox.{" "}
+          {Math.floor(route.durationS / 3600)} h {Math.floor((route.durationS % 3600) / 60)} min
         </p>
       ) : null}
 

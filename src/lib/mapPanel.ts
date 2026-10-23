@@ -67,9 +67,9 @@ export type SheetView = {
 
 export function resolveSheet(
   state: MapPanelState,
-  ctx: { routeActive: boolean; pickingOrigin: boolean },
+  ctx: { routeActive: boolean; pickingOrigin: boolean; pickingDestination?: boolean },
 ): SheetView {
-  if (ctx.pickingOrigin) {
+  if (ctx.pickingOrigin || ctx.pickingDestination) {
     return { kind: "picking", height: "peek", backToRoute: false };
   }
   if (state.tool) {

@@ -3,26 +3,40 @@ import type { ResourceStatus, ResourceType } from "@/types/sihe";
 import { statusColor, typeColor } from "@/lib/resourceLabels";
 
 const cache = new Map<string, L.DivIcon>();
+const svgCache = new Map<string, string>();
 
 const SIZE = 22;
 
-const HYDRANT =
-  '<path d="M9 3h6v2H9V3zm1 2h4v1.5h3.2V9H15.5v8.2H8.5V9H6.8V6.5H10V5zm-3.5 4.2h2.2v2.2H6.5V9.2zm9 0H17.7v2.2h-2.2V9.2zM8 18.5h8V21H8v-2.5z"/>';
+const iconPaths: Record<string, string> = {
+  Flame: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+  Droplet: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>',
+  Container: '<path d="M22 7.7c0-.6-.4-1.2-.7-1.5L12 .4 2.7 6.2c-.3.3-.7.8-.7 1.5v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2zM9.3 17.7v-3.4"/><path d="M14.7 17.7v-3.4"/>',
+  MapPin: '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+  User: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  Circle: '<circle cx="12" cy="12" r="10"/>',
+  Flag: '<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/>',
+};
 
-const DROPLET =
-  '<path d="M12 2.8c0 0 6.4 7.4 6.4 11.6A6.4 6.4 0 1 1 5.6 14.4C5.6 10.2 12 2.8 12 2.8z"/>';
+function createSvgFromIcon(
+  iconName: string,
+  size: number,
+  color: string,
+  strokeWidth: number,
+): string {
+  const path = iconPaths[iconName];
+  if (!path) return "";
+  
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
+}
 
-const TANK =
-  '<path d="M8.2 3.2h7.6v2.6H8.2V3.2zm1.1 3.4h5.4v8.6H9.3V6.6zM7 16h10v2.2H7V16zM8.4 18.2h1.4V21H8.4v-2.8zm5.8 0H15.6V21h-1.4v-2.8z"/>';
-
-function glyph(type: ResourceType): string {
+function getIconName(type: ResourceType): string {
   switch (type) {
     case "espejo":
-      return DROPLET;
+      return "Droplet";
     case "tanque":
-      return TANK;
+      return "Container";
     default:
-      return HYDRANT;
+      return "Flame";
   }
 }
 
@@ -31,7 +45,14 @@ export function resourceGlyphSvg(
   fill = "#fff",
   size = 16,
 ): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="${size}" height="${size}" fill="${fill}" aria-hidden="true">${glyph(type)}</svg>`;
+  const cacheKey = `${type}-${fill}-${size}`;
+  const cached = svgCache.get(cacheKey);
+  if (cached) return cached;
+
+  const iconName = getIconName(type);
+  const markup = createSvgFromIcon(iconName, size, fill, 2.5);
+  svgCache.set(cacheKey, markup);
+  return markup;
 }
 
 export function resourceMapIcon(

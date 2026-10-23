@@ -6,7 +6,7 @@ import { osrmStepInstruction } from "@/lib/osrmManeuvers";
 import type { LatLng } from "@/lib/userLocation";
 import type { ResourceType } from "@/types/sihe";
 
-export type RouteTargetKind = "recurso" | "direccion";
+export type RouteTargetKind = "recurso" | "direccion" | "punto";
 
 export type RouteTarget = {
   lat: number;

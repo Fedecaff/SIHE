@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect, useMemo } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -19,6 +19,8 @@ import {
   useMapEvents,
 
 } from "react-leaflet";
+
+import MarkerClusterGroup from "react-leaflet-cluster";
 
 import L from "leaflet";
 
@@ -103,6 +105,10 @@ type Props = {
 
   onPickOrigin?: (point: LatLng) => void;
 
+  pickingDestination?: boolean;
+
+  onPickDestination?: (point: LatLng) => void;
+
   addressLabel?: string;
 
   onRouteToAddress?: () => void;
@@ -131,32 +137,29 @@ type Props = {
 
 };
 
+const iconPaths: Record<string, string> = {
+  MapPin: '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+  User: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+};
 
+function createSvgIcon(iconName: string, size: number, strokeWidth: number): string {
+  const path = iconPaths[iconName];
+  if (!path) return "";
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
+}
 
 const addressIcon = L.divIcon({
-
   className: "address-marker",
-
-  html: '<span class="address-marker-dot"></span>',
-
-  iconSize: [18, 18],
-
-  iconAnchor: [9, 9],
-
+  html: `<div class="map-icon-pin map-icon-address">${createSvgIcon("MapPin", 18, 2.5)}</div>`,
+  iconSize: [24, 24],
+  iconAnchor: [12, 24],
 });
 
-
-
 const userIcon = L.divIcon({
-
   className: "user-marker",
-
-  html: '<span class="user-marker-dot"></span>',
-
-  iconSize: [22, 22],
-
-  iconAnchor: [11, 11],
-
+  html: `<div class="map-icon-pulse">${createSvgIcon("User", 16, 3)}</div>`,
+  iconSize: [24, 24],
+  iconAnchor: [12, 12],
 });
 
 
@@ -413,6 +416,10 @@ export function MapView({
 
   onPickOrigin,
 
+  pickingDestination = false,
+
+  onPickDestination,
+
   addressLabel,
 
   baseLayer = "Mapa (OSM)",
@@ -436,6 +443,20 @@ export function MapView({
   viewPadding = { top: 72, right: 80, bottom: 16, left: 16 },
 
 }: Props) {
+  const mapClass = pickingOrigin
+    ? "map-canvas is-picking-origin"
+    : pickingDestination
+      ? "map-canvas is-picking-destination"
+      : "map-canvas";
+  
+  const resourceMarkers = useMemo(() => {
+    return items.map((item) => ({
+      id: item.id,
+      position: [item.lat, item.lng] as [number, number],
+      icon: resourceMapIcon(item.type, item.status),
+      item,
+    }));
+  }, [items]);
 
   return (
 
@@ -445,7 +466,7 @@ export function MapView({
 
       zoom={MAP_DEFAULT_ZOOM}
 
-      className={pickingOrigin ? "map-canvas is-picking-origin" : "map-canvas"}
+      className={mapClass}
 
       scrollWheelZoom
 
@@ -502,6 +523,10 @@ export function MapView({
         pickingOrigin={pickingOrigin}
 
         onPickOrigin={onPickOrigin ?? (() => undefined)}
+
+        pickingDestination={pickingDestination}
+
+        onPickDestination={onPickDestination ?? (() => undefined)}
 
         viewPadding={viewPadding}
 
@@ -625,17 +650,35 @@ export function MapView({
 
 
 
-      {items.map((item) => (
-        <Marker
-          key={item.id}
-          pane="resources"
-          position={[item.lat, item.lng]}
-          icon={resourceMapIcon(item.type, item.status)}
-          eventHandlers={{
-            click: () => onSelectResource?.(item),
-          }}
-        />
-      ))}
+      <MarkerClusterGroup
+        chunkedLoading
+        showCoverageOnHover={false}
+        maxClusterRadius={60}
+        spiderfyOnMaxZoom
+        iconCreateFunction={(cluster: { getChildCount: () => number }) => {
+          const count = cluster.getChildCount();
+          let sizeClass = "small";
+          if (count >= 100) sizeClass = "large";
+          else if (count >= 10) sizeClass = "medium";
+          return L.divIcon({
+            html: `<div><span>${count}</span></div>`,
+            className: `marker-cluster marker-cluster-${sizeClass}`,
+            iconSize: L.point(40, 40),
+          });
+        }}
+      >
+        {resourceMarkers.map(({ id, position, icon, item }) => (
+          <Marker
+            key={id}
+            pane="resources"
+            position={position}
+            icon={icon}
+            eventHandlers={{
+              click: () => onSelectResource?.(item),
+            }}
+          />
+        ))}
+      </MarkerClusterGroup>
 
     </MapContainer>
 

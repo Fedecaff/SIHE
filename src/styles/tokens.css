@@ -42,6 +42,18 @@
   --z-map-toast: 30;
   --z-app-nav: 40;
   --z-modal: 100;
+  
+  --cluster-small-bg: rgba(59, 130, 246, 0.4);
+  --cluster-small-fg: #3b82f6;
+  --cluster-medium-bg: rgba(249, 115, 22, 0.4);
+  --cluster-medium-fg: #f97316;
+  --cluster-large-bg: rgba(239, 68, 68, 0.4);
+  --cluster-large-fg: #ef4444;
+  
+  --icon-user-bg: #0ea5e9;
+  --icon-address-color: #2563eb;
+  --icon-origin-bg: #22c55e;
+  --icon-dest-color: #dc2626;
 }
 
 /* Breakpoints: móvil < 768, tablet 768–1023, escritorio ≥ 1024,
