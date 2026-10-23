@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   MapContainer,
@@ -7,15 +7,30 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import L from "leaflet";
-import { useToast } from "@/app/providers";
+import { useAuth, useToast } from "@/app/providers";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import { toUserMessage } from "@/lib/errorMessages";
+import {
+  clearFormDraft,
+  loadFormDraft,
+  saveFormDraft,
+} from "@/lib/formDraft";
 import { CATAMARCA_CENTER, MAP_DEFAULT_ZOOM } from "@/lib/mapConstants";
 import { formatMapCoords } from "@/services/geocode";
 import {
   createFireEventAdmin,
   type FireEventType,
 } from "@/services/fires";
+
+const FIRE_DRAFT = "incendio-nuevo";
+
+type FireDraft = {
+  eventType: FireEventType;
+  occurredAt: string;
+  description: string;
+  lat: number | null;
+  lng: number | null;
+};
 
 const pinIcon = L.divIcon({
   className: "address-marker",
@@ -45,6 +60,7 @@ function toLocalInputValue(date: Date): string {
 
 export function AdminCreateFirePage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { showToast } = useToast();
   const [eventType, setEventType] =
     useState<FireEventType>("incendio_forestal");
@@ -58,8 +74,39 @@ export function AdminCreateFirePage() {
   const [error, setError] = useState<string | null>(null);
   const [dirty, setDirty] = useState(false);
   const [allowLeave, setAllowLeave] = useState(false);
+  const [draftReady, setDraftReady] = useState(false);
 
   useUnsavedChanges(dirty && !allowLeave && !saving);
+
+  useEffect(() => {
+    const draft = loadFormDraft<FireDraft>(user?.id, FIRE_DRAFT);
+    if (draft) {
+      if (draft.eventType) setEventType(draft.eventType);
+      if (draft.occurredAt) setOccurredAt(draft.occurredAt);
+      if (typeof draft.description === "string") setDescription(draft.description);
+      if (typeof draft.lat === "number") setLat(draft.lat);
+      if (typeof draft.lng === "number") setLng(draft.lng);
+      if (
+        draft.description ||
+        draft.lat != null ||
+        (draft.eventType && draft.eventType !== "incendio_forestal")
+      ) {
+        setDirty(true);
+      }
+    }
+    setDraftReady(true);
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (!draftReady || allowLeave) return;
+    saveFormDraft(user?.id, FIRE_DRAFT, {
+      eventType,
+      occurredAt,
+      description,
+      lat,
+      lng,
+    });
+  }, [user?.id, draftReady, allowLeave, eventType, occurredAt, description, lat, lng]);
 
   function markDirty() {
     setDirty(true);
@@ -94,6 +141,7 @@ export function AdminCreateFirePage() {
       });
       setAllowLeave(true);
       setDirty(false);
+      clearFormDraft(user?.id, FIRE_DRAFT);
       showToast("Incendio registrado");
       navigate(`/incendios/${id}`);
     } catch (err: unknown) {

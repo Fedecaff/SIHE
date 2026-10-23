@@ -7,6 +7,11 @@ import { Spinner } from "@/components/ui/Spinner";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 
 import { toUserMessage } from "@/lib/errorMessages";
+import {
+  clearFormDraft,
+  loadFormDraft,
+  saveFormDraft,
+} from "@/lib/formDraft";
 
 import {
 
@@ -24,7 +29,11 @@ import { fetchResourceDetail } from "@/services/resources";
 
 import type { IncidentType, ResourceStatus } from "@/types/sihe";
 
-
+type IncidentDraft = {
+  type: IncidentType;
+  description: string;
+  suggestedStatus: ResourceStatus | "";
+};
 
 export function ReportIncidentPage() {
 
@@ -35,6 +44,8 @@ export function ReportIncidentPage() {
   const { showToast } = useToast();
 
   const navigate = useNavigate();
+
+  const draftKey = id ? `incidencia:${id}` : "incidencia";
 
   const [resourceName, setResourceName] = useState("");
 
@@ -62,11 +73,37 @@ export function ReportIncidentPage() {
 
   const [allowLeave, setAllowLeave] = useState(false);
 
+  const [draftReady, setDraftReady] = useState(false);
+
   useUnsavedChanges(dirty && !allowLeave && !saving);
 
   function markDirty() {
     setDirty(true);
   }
+
+  useEffect(() => {
+    const draft = loadFormDraft<IncidentDraft>(user?.id, draftKey);
+    if (draft) {
+      if (draft.type) setType(draft.type);
+      if (typeof draft.description === "string") setDescription(draft.description);
+      if (draft.suggestedStatus !== undefined) {
+        setSuggestedStatus(draft.suggestedStatus);
+      }
+      if (draft.description || draft.suggestedStatus || (draft.type && draft.type !== "dano")) {
+        setDirty(true);
+      }
+    }
+    setDraftReady(true);
+  }, [user?.id, draftKey]);
+
+  useEffect(() => {
+    if (!draftReady || allowLeave) return;
+    saveFormDraft(user?.id, draftKey, {
+      type,
+      description,
+      suggestedStatus,
+    });
+  }, [user?.id, draftKey, draftReady, allowLeave, type, description, suggestedStatus]);
 
   useEffect(() => {
 
@@ -143,6 +180,8 @@ export function ReportIncidentPage() {
       setAllowLeave(true);
 
       setDirty(false);
+
+      clearFormDraft(user?.id, draftKey);
 
       showToast("Incidencia enviada");
 
