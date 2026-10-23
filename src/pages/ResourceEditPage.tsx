@@ -2,7 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { useAuth } from "@/app/providers";
+import { useAuth, useToast } from "@/app/providers";
 
 import { RESOURCE_STATUS_OPTIONS } from "@/lib/incidentLabels";
 
@@ -25,6 +25,8 @@ export function ResourceEditPage() {
   const { id = "" } = useParams();
 
   const { user } = useAuth();
+
+  const { showToast } = useToast();
 
   const navigate = useNavigate();
 
@@ -117,6 +119,8 @@ export function ResourceEditPage() {
         observations,
 
       });
+
+      showToast("Cambios guardados");
 
       navigate(`/recursos/${id}`);
 

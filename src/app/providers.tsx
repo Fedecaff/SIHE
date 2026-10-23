@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -26,7 +27,19 @@ type AuthState = {
   logout: () => Promise<void>;
 };
 
+type ToastItem = {
+  id: number;
+  text: string;
+};
+
+type ToastState = {
+  showToast: (text: string) => void;
+};
+
 const AuthContext = createContext<AuthState | null>(null);
+const ToastContext = createContext<ToastState | null>(null);
+
+const TOAST_MS = 4000;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -102,5 +115,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuth(): AuthState {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth debe usarse dentro de AuthProvider");
+  return ctx;
+}
+
+export function ToastProvider({ children }: { children: ReactNode }) {
+  const [items, setItems] = useState<ToastItem[]>([]);
+  const nextId = useRef(1);
+
+  const showToast = useCallback((text: string) => {
+    const id = nextId.current;
+    nextId.current += 1;
+    setItems((current) => [...current, { id, text }]);
+    window.setTimeout(() => {
+      setItems((current) => current.filter((item) => item.id !== id));
+    }, TOAST_MS);
+  }, []);
+
+  const value = useMemo(() => ({ showToast }), [showToast]);
+
+  return (
+    <ToastContext.Provider value={value}>
+      {children}
+      {items.length > 0 ? (
+        <div className="app-toasts" aria-live="polite">
+          {items.map((item) => (
+            <p key={item.id} className="app-toast" role="status">
+              {item.text}
+            </p>
+          ))}
+        </div>
+      ) : null}
+    </ToastContext.Provider>
+  );
+}
+
+export function useToast(): ToastState {
+  const ctx = useContext(ToastContext);
+  if (!ctx) throw new Error("useToast debe usarse dentro de ToastProvider");
   return ctx;
 }

@@ -7,6 +7,7 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import L from "leaflet";
+import { useToast } from "@/app/providers";
 import { CATAMARCA_CENTER, MAP_DEFAULT_ZOOM } from "@/lib/mapConstants";
 import { formatMapCoords } from "@/services/geocode";
 import {
@@ -42,6 +43,7 @@ function toLocalInputValue(date: Date): string {
 
 export function AdminCreateFirePage() {
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [eventType, setEventType] =
     useState<FireEventType>("incendio_forestal");
   const [occurredAt, setOccurredAt] = useState(() =>
@@ -80,6 +82,7 @@ export function AdminCreateFirePage() {
         lng,
         description,
       });
+      showToast("Incendio registrado");
       navigate(`/incendios/${id}`);
     } catch (err: unknown) {
       setError(

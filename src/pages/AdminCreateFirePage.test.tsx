@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { ToastProvider } from "@/app/providers";
 import { AdminCreateFirePage } from "@/pages/AdminCreateFirePage";
 
 const { createFireEventAdmin, onClick } = vi.hoisted(() => ({
@@ -40,12 +41,14 @@ vi.mock("@/services/fires", () => ({
 
 function renderPage() {
   return render(
-    <MemoryRouter initialEntries={["/admin/incendios/nuevo"]}>
-      <Routes>
-        <Route path="/admin/incendios/nuevo" element={<AdminCreateFirePage />} />
-        <Route path="/incendios/:id" element={<p>detalle incendio</p>} />
-      </Routes>
-    </MemoryRouter>,
+    <ToastProvider>
+      <MemoryRouter initialEntries={["/admin/incendios/nuevo"]}>
+        <Routes>
+          <Route path="/admin/incendios/nuevo" element={<AdminCreateFirePage />} />
+          <Route path="/incendios/:id" element={<p>detalle incendio</p>} />
+        </Routes>
+      </MemoryRouter>
+    </ToastProvider>,
   );
 }
 

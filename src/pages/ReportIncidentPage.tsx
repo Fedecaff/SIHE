@@ -2,7 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { useAuth } from "@/app/providers";
+import { useAuth, useToast } from "@/app/providers";
 
 import {
 
@@ -27,6 +27,8 @@ export function ReportIncidentPage() {
   const { id = "" } = useParams();
 
   const { user } = useAuth();
+
+  const { showToast } = useToast();
 
   const navigate = useNavigate();
 
@@ -125,6 +127,8 @@ export function ReportIncidentPage() {
         photo,
 
       });
+
+      showToast("Incidencia enviada");
 
       navigate(`/recursos/${id}`);
 
