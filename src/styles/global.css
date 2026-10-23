@@ -167,6 +167,39 @@ a {
   cursor: not-allowed;
 }
 
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch-min);
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  border: 2px solid var(--color-text);
+  background: #fff;
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: #f4f4f5;
+}
+
+.map-resource-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--map-gap);
+  margin-top: 12px;
+}
+
+.map-cta-route {
+  width: 100%;
+  min-height: 48px;
+  order: 99;
+}
+
 .login-help {
   margin: 16px 0 0;
   text-align: center;

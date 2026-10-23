@@ -12,35 +12,35 @@ type Props = {
 
 export function MapResourceCard({ resource, isAdmin, peek, onRoute }: Props) {
   return (
-    <div className="map-panel-body">
+    <div className="map-panel-body map-resource-card">
       <p className="muted">
         {typeLabel(resource.type)} · {statusLabel(resource.status)}
       </p>
       {peek ? null : (
         <p className="muted">Verificación: {formatDateTime(resource.last_verified_at)}</p>
       )}
-      <div className="map-sheet-actions">
-        <button type="button" className="btn-primary btn-inline" onClick={onRoute}>
-          Cómo llegar
-        </button>
+      <div className="map-sheet-actions map-resource-actions">
         {peek ? null : (
           <>
-            <Link to={`/recursos/${resource.id}`} className="btn-toolbar">
+            <Link to={`/recursos/${resource.id}`} className="btn-secondary">
               Ver ficha
             </Link>
             <Link
               to={`/recursos/${resource.id}/incidencia`}
-              className="btn-toolbar"
+              className="btn-secondary"
             >
               Reportar
             </Link>
             {isAdmin ? (
-              <Link to={`/recursos/${resource.id}/editar`} className="btn-toolbar">
+              <Link to={`/recursos/${resource.id}/editar`} className="btn-secondary">
                 Actualizar
               </Link>
             ) : null}
           </>
         )}
+        <button type="button" className="btn-primary map-cta-route" onClick={onRoute}>
+          Cómo llegar
+        </button>
       </div>
     </div>
   );
