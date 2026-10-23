@@ -1664,7 +1664,6 @@ a {
   border-radius: 99px;
   font-size: 11px;
 }
-.map-rail-glyph { font-size: 20px; line-height: 1; }
 .map-toasts {
   position: absolute;
   z-index: var(--z-map-toast);
