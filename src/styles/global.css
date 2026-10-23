@@ -59,7 +59,7 @@ a {
   margin: 0 0 20px;
   text-align: center;
   color: var(--color-muted);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .field {
@@ -245,7 +245,7 @@ a {
 .login-help {
   margin: 16px 0 0;
   text-align: center;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--color-muted);
 }
 
@@ -293,8 +293,8 @@ a {
 }
 
 .app-header-place {
-  font-size: 11px;
-  opacity: 0.85;
+  font-size: 12px;
+  color: #e8eef2;
 }
 
 .app-header-nav {
@@ -307,13 +307,12 @@ a {
   padding: 6px 10px;
   border-radius: var(--radius);
   font-size: 13px;
-  opacity: 0.9;
+  color: #fff;
 }
 
 .app-nav-link.is-active,
 .app-nav-link:hover {
   background: rgba(255, 255, 255, 0.15);
-  opacity: 1;
 }
 
 .header-bell {
@@ -913,8 +912,8 @@ a {
 }
 
 .map-popup-address {
-  font-size: 12px;
-  color: #666;
+  font-size: 14px;
+  color: var(--color-muted);
 }
 
 .map-page .leaflet-top { top: var(--map-inset-top, 64px); }
@@ -1026,8 +1025,8 @@ a {
 }
 
 .status-observaciones {
-  background: #fef9c3;
-  color: #854d0e;
+  background: #fef3c7;
+  color: #713f12;
 }
 
 .status-no_utilizable {
@@ -1186,9 +1185,16 @@ a {
 
 .form-hint {
   margin: 0 0 12px;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--color-muted);
   line-height: 1.4;
+}
+
+.field input::placeholder,
+.field textarea::placeholder,
+.map-search input::placeholder {
+  color: var(--color-placeholder);
+  opacity: 1;
 }
 
 .form-hint a {
