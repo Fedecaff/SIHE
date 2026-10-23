@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { UserRole } from "@/types/sihe";
 import { useAuth } from "@/app/providers";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import { roleLabel } from "@/lib/roleLabel";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 type HeaderProps = {
   pendingIncidentCount?: number;
@@ -10,6 +12,7 @@ type HeaderProps = {
 
 export function Header({ pendingIncidentCount = 0 }: HeaderProps) {
   const { user, logout } = useAuth();
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const isAdmin = user?.role === UserRole.Administrador;
 
   return (
@@ -50,11 +53,24 @@ export function Header({ pendingIncidentCount = 0 }: HeaderProps) {
         <button
           type="button"
           className="btn-toolbar app-header-logout"
-          onClick={() => void logout()}
+          onClick={() => setShowLogoutConfirm(true)}
         >
           Salir
         </button>
       </div>
+
+      <ConfirmDialog
+        isOpen={showLogoutConfirm}
+        title="¿Cerrar sesión?"
+        message="Tendrás que volver a ingresar para usar SIHE."
+        confirmLabel="Cerrar sesión"
+        cancelLabel="Cancelar"
+        onConfirm={() => {
+          setShowLogoutConfirm(false);
+          void logout();
+        }}
+        onCancel={() => setShowLogoutConfirm(false)}
+      />
     </header>
   );
 }
