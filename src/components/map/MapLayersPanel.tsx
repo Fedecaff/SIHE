@@ -50,12 +50,12 @@ const SATELLITE: { id: string; title: string; detail: string }[] = [
   {
     id: OVERLAY_FIRMS,
     title: "Focos de calor FIRMS",
-    detail: "Puntos detectados por satélite; no confirman un incendio.",
+    detail: "Focos de calor detectados por satélite; no confirman incendio.",
   },
   {
     id: OVERLAY_WMS,
     title: "Anomalías térmicas (GIBS)",
-    detail: "Manchas de calor de VIIRS y MODIS sobre la imagen.",
+    detail: "Manchas de calor satelital dibujadas sobre el mapa.",
   },
   {
     id: OVERLAY_MODIS,

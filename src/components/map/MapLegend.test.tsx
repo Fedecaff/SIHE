@@ -11,10 +11,23 @@ describe("MapLegend", () => {
 
   it("con FIRMS aparecen los tres colores de confianza", () => {
     render(<MapLegend embedded showFirms firmsLabel="4 focos · 24 h" />);
+    expect(
+      screen.getByText(/Focos de calor detectados por satélite/),
+    ).toBeTruthy();
     expect(screen.getByText("Confianza alta")).toBeTruthy();
     expect(screen.getByText("Confianza nominal")).toBeTruthy();
     expect(screen.getByText("Confianza baja")).toBeTruthy();
     expect(screen.getByText("4 focos · 24 h")).toBeTruthy();
+  });
+
+  it("con MODIS y WMS muestra ayuda en lenguaje llano", () => {
+    render(<MapLegend embedded showModis showWms />);
+    expect(
+      screen.getByText(/Falso color: rojo o marrón puede ser un área quemada/),
+    ).toBeTruthy();
+    expect(
+      screen.getByText(/Manchas de calor satelital dibujadas sobre el mapa/),
+    ).toBeTruthy();
   });
 
   it("con Tipo hidrante solo se lista hidrante", () => {

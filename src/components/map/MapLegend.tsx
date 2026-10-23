@@ -91,30 +91,35 @@ export function MapLegend({
           <h2>Fuego satelital</h2>
           <p className="map-legend-note">Fecha o ventana: {imageDate}</p>
           {showFirms ? (
-            <ul>
-              <li>
-                <span className="map-legend-dot" style={{ background: "#d7301f" }} />
-                Confianza alta
-              </li>
-              <li>
-                <span className="map-legend-dot" style={{ background: "#fc8d59" }} />
-                Confianza nominal
-              </li>
-              <li>
-                <span className="map-legend-dot" style={{ background: "#fdcc8a" }} />
-                Confianza baja
-              </li>
-            </ul>
+            <>
+              <p className="map-legend-note">
+                Focos de calor detectados por satélite; no confirman incendio.
+              </p>
+              <ul>
+                <li>
+                  <span className="map-legend-dot" style={{ background: "#d7301f" }} />
+                  Confianza alta
+                </li>
+                <li>
+                  <span className="map-legend-dot" style={{ background: "#fc8d59" }} />
+                  Confianza nominal
+                </li>
+                <li>
+                  <span className="map-legend-dot" style={{ background: "#fdcc8a" }} />
+                  Confianza baja
+                </li>
+              </ul>
+            </>
           ) : null}
           {firmsLabel ? <p className="map-legend-note">{firmsLabel}</p> : null}
           {showModis || showViirs ? (
             <p className="map-legend-note">
-              7-2-1: rojo/marrón, posible área quemada; verde, vegetación.
+              Falso color: rojo o marrón puede ser un área quemada.
             </p>
           ) : null}
           {showWms ? (
             <p className="map-legend-note">
-              Fuego WMS: anomalías térmicas de VIIRS y MODIS (NASA GIBS).
+              Manchas de calor satelital dibujadas sobre el mapa.
             </p>
           ) : null}
         </>

@@ -47,6 +47,15 @@ describe("MapLayersPanel", () => {
     expect(screen.getByText("Incendios registrados en SIHE")).toBeTruthy();
     expect(screen.getByText("Calles (OpenStreetMap)")).toBeTruthy();
     expect(screen.getByText("Focos de calor FIRMS")).toBeTruthy();
+    expect(
+      screen.getByText(/Focos de calor detectados por satélite/),
+    ).toBeTruthy();
+    expect(
+      screen.getByText(/Falso color: rojo o marrón puede ser un área quemada/),
+    ).toBeTruthy();
+    expect(
+      screen.getByText(/Manchas de calor satelital dibujadas sobre el mapa/),
+    ).toBeTruthy();
   });
 
   it("elegir una base llama a changeBase con la constante interna", () => {
