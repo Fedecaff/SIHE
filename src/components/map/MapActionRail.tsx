@@ -8,9 +8,11 @@ type Props = {
   activeOverlays: number;
   showZoom: boolean;
   dimmed: boolean;
+  pickingPoint: boolean;
   onToggleFilters: () => void;
   onToggleLayers: () => void;
   onToggleLegend: () => void;
+  onTogglePickPoint: () => void;
   onLocate: () => void;
   onHome: () => void;
   onZoomIn: () => void;
@@ -25,9 +27,11 @@ export function MapActionRail({
   activeOverlays,
   showZoom,
   dimmed,
+  pickingPoint,
   onToggleFilters,
   onToggleLayers,
   onToggleLegend,
+  onTogglePickPoint,
   onLocate,
   onHome,
   onZoomIn,
@@ -59,6 +63,14 @@ export function MapActionRail({
         </RailButton>
       </div>
       <div className="map-rail-group">
+        <RailButton
+          id="map-rail-marcar"
+          label="Marcar punto"
+          pressed={pickingPoint}
+          onClick={onTogglePickPoint}
+        >
+          <PinIcon />
+        </RailButton>
         {showZoom ? (
           <>
             <RailButton label="Acercar" onClick={onZoomIn}>
@@ -152,6 +164,15 @@ function HomeIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className="map-svg">
       <path d="M4 11l8-7 8 7v8H4v-8z" fill="none" stroke="currentColor" strokeWidth="2" />
+    </svg>
+  );
+}
+
+function PinIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="map-svg">
+      <path d="M12 2c-3.9 0-7 3.1-7 7 0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z" fill="none" stroke="currentColor" strokeWidth="2" />
+      <circle cx="12" cy="9" r="2.5" fill="currentColor" />
     </svg>
   );
 }

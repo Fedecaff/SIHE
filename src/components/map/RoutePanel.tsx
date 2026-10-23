@@ -11,15 +11,43 @@ export function RoutePanel() {
     error,
     needsOrigin,
     pickingOriginOnMap,
+    pickingDestinationOnMap,
     followLive,
     setOriginFromAddress,
     beginPickOriginOnMap,
     closeRoute,
     setFollowLive,
+    cancelPickDestination,
   } = useRoute();
   const [originQuery, setOriginQuery] = useState("");
   const [originSearching, setOriginSearching] = useState(false);
 
+  if (!destination && !pickingDestinationOnMap) return null;
+  
+  if (pickingDestinationOnMap) {
+    return (
+      <section className="route-panel" aria-label="Marcar punto" aria-live="polite">
+        <div className="route-panel-head">
+          <div>
+            <p className="route-panel-kicker">Marcar punto en el mapa</p>
+            <h2>Tocá el mapa para marcar el destino</h2>
+          </div>
+          <button
+            type="button"
+            className="btn-toolbar"
+            aria-label="Cancelar"
+            onClick={cancelPickDestination}
+          >
+            Cancelar
+          </button>
+        </div>
+        <p className="muted">
+          El punto marcado se usará como destino para calcular cómo llegar.
+        </p>
+      </section>
+    );
+  }
+  
   if (!destination) return null;
 
   const title =
@@ -50,10 +78,18 @@ export function RoutePanel() {
           <p className="route-panel-kicker">Cómo llegar</p>
           <h2>{title}</h2>
           {route ? (
-            <p className="muted">
-              {formatRouteDistance(route.distanceM)} ·{" "}
-              {formatRouteDuration(route.durationS)}
-            </p>
+            <>
+              <p className="muted">
+                {formatRouteDistance(route.distanceM)} ·{" "}
+                {formatRouteDuration(route.durationS)}
+              </p>
+              {route.distanceM > 300000 ? (
+                <p className="route-warning" role="alert">
+                  Esta ruta es muy larga ({Math.round(route.distanceM / 1000)} km).
+                  Verificá que el destino sea el correcto.
+                </p>
+              ) : null}
+            </>
           ) : loading ? (
             <p className="muted">Calculando ruta…</p>
           ) : null}

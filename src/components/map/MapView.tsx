@@ -103,6 +103,10 @@ type Props = {
 
   onPickOrigin?: (point: LatLng) => void;
 
+  pickingDestination?: boolean;
+
+  onPickDestination?: (point: LatLng) => void;
+
   addressLabel?: string;
 
   onRouteToAddress?: () => void;
@@ -413,6 +417,10 @@ export function MapView({
 
   onPickOrigin,
 
+  pickingDestination = false,
+
+  onPickDestination,
+
   addressLabel,
 
   baseLayer = "Mapa (OSM)",
@@ -436,6 +444,11 @@ export function MapView({
   viewPadding = { top: 72, right: 80, bottom: 16, left: 16 },
 
 }: Props) {
+  const mapClass = pickingOrigin
+    ? "map-canvas is-picking-origin"
+    : pickingDestination
+      ? "map-canvas is-picking-destination"
+      : "map-canvas";
 
   return (
 
@@ -445,7 +458,7 @@ export function MapView({
 
       zoom={MAP_DEFAULT_ZOOM}
 
-      className={pickingOrigin ? "map-canvas is-picking-origin" : "map-canvas"}
+      className={mapClass}
 
       scrollWheelZoom
 
@@ -502,6 +515,10 @@ export function MapView({
         pickingOrigin={pickingOrigin}
 
         onPickOrigin={onPickOrigin ?? (() => undefined)}
+
+        pickingDestination={pickingDestination}
+
+        onPickDestination={onPickDestination ?? (() => undefined)}
 
         viewPadding={viewPadding}
 

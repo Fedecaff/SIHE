@@ -68,12 +68,30 @@ function OriginPicker({
   return null;
 }
 
+function DestinationPicker({
+  enabled,
+  onPick,
+}: {
+  enabled: boolean;
+  onPick: (point: LatLng) => void;
+}) {
+  useMapEvents({
+    click(e) {
+      if (!enabled) return;
+      onPick({ lat: e.latlng.lat, lng: e.latlng.lng });
+    },
+  });
+  return null;
+}
+
 type Props = {
   geometry: LatLng[];
   origin: LatLng | null;
   destination: RouteTarget | null;
   pickingOrigin: boolean;
   onPickOrigin: (point: LatLng) => void;
+  pickingDestination: boolean;
+  onPickDestination: (point: LatLng) => void;
   viewPadding?: { top: number; right: number; bottom: number; left: number };
 };
 
@@ -83,11 +101,14 @@ export function RouteLayer({
   destination,
   pickingOrigin,
   onPickOrigin,
+  pickingDestination,
+  onPickDestination,
   viewPadding = { top: 48, right: 48, bottom: 48, left: 48 },
 }: Props) {
   return (
     <>
       <OriginPicker enabled={pickingOrigin} onPick={onPickOrigin} />
+      <DestinationPicker enabled={pickingDestination} onPick={onPickDestination} />
       {geometry.length > 1 ? (
         <>
           <Polyline
