@@ -18,17 +18,20 @@ const iconPaths: Record<string, string> = {
   FireHydrant: '<path d="M5 21h14" /><path d="M17 21v-5h1a1 1 0 0 0 1 -1v-2a1 1 0 0 0 -1 -1h-1v-4a5 5 0 0 0 -10 0v4h-1a1 1 0 0 0 -1 1v2a1 1 0 0 0 1 1h1v5" /><path d="M10 14a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M6 8h12" />',
   // Tanque elevado. IconOven, MIT.
   WaterTower: '<rect width="14.5" height="8.5" x="4.75" y="2.75" rx="3"/><path d="M4.75 7h14.5m-12.5 4v10.25M17.25 11v10.25M6.75 17h3.5m3.5 0h3.5M12 11.25v10"/>',
+  MapPin: '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+  User: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  Circle: '<circle cx="12" cy="12" r="10"/>',
+  Flag: '<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/>',
 };
 
-export function createSvgFromIcon(
+export function createSvgIcon(
   iconName: string,
   size: number,
-  color: string,
   strokeWidth: number,
+  color = "currentColor",
 ): string {
   const path = iconPaths[iconName];
   if (!path) return "";
-  
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
 }
 
@@ -57,7 +60,7 @@ export function resourceGlyphSvg(
   if (cached) return cached;
 
   const iconName = getIconName(type);
-  const markup = createSvgFromIcon(iconName, size, fill, 2.5);
+  const markup = createSvgIcon(iconName, size, 2.5, fill);
   svgCache.set(cacheKey, markup);
   return markup;
 }

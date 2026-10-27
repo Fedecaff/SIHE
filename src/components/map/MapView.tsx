@@ -27,7 +27,7 @@ import L from "leaflet";
 import type { ResourceMapItem } from "@/types/sihe";
 
 import { CATAMARCA_CENTER, MAP_DEFAULT_ZOOM } from "@/lib/mapConstants";
-import { resourceMapIcon } from "@/lib/mapIcons";
+import { createSvgIcon, resourceMapIcon } from "@/lib/mapIcons";
 import { getBrowserLocation } from "@/lib/userLocation";
 import type { LatLng } from "@/lib/userLocation";
 import type { RouteTarget } from "@/services/routing";
@@ -138,17 +138,6 @@ type Props = {
   onTileError?: (name: string) => void;
 
 };
-
-const iconPaths: Record<string, string> = {
-  MapPin: '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
-  User: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
-};
-
-function createSvgIcon(iconName: string, size: number, strokeWidth: number): string {
-  const path = iconPaths[iconName];
-  if (!path) return "";
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
-}
 
 const addressIcon = L.divIcon({
   className: "address-marker",
