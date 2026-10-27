@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { countPendingIncidents } from "@/services/resources";
 
@@ -14,16 +14,18 @@ export function usePendingIncidentCount(enabled: boolean): number {
   const { pathname } = useLocation();
   const [count, setCount] = useState(0);
   const [trackedEnabled, setTrackedEnabled] = useState(enabled);
+  const requestSeq = useRef(0);
 
-  // Con el badge apagado el conteo visible es cero, sin otro render desde el efecto.
   if (trackedEnabled !== enabled) {
     setTrackedEnabled(enabled);
     if (!enabled) setCount(0);
   }
 
   const refresh = useCallback(() => {
+    const seq = ++requestSeq.current;
     void countPendingIncidents()
       .then((next) => {
+        if (seq !== requestSeq.current) return;
         setCount(next);
       })
       .catch(() => {
@@ -32,7 +34,11 @@ export function usePendingIncidentCount(enabled: boolean): number {
   }, []);
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) {
+      // La respuesta que todavía no llegó queda fuera de esta secuencia.
+      requestSeq.current += 1;
+      return;
+    }
     refresh();
   }, [enabled, pathname, refresh]);
 
@@ -57,5 +63,5 @@ export function usePendingIncidentCount(enabled: boolean): number {
     };
   }, [enabled, refresh]);
 
-  return count;
+  return enabled ? count : 0;
 }
