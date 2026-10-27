@@ -1,6 +1,6 @@
 const ARGENTINA = "America/Argentina/Buenos_Aires";
 
-export function formatArgentinaDate(now: Date): string {
+function formatArgentinaDate(now: Date): string {
   return new Intl.DateTimeFormat("en-CA", {
     timeZone: ARGENTINA,
     year: "numeric",

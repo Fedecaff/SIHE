@@ -12,7 +12,7 @@ const { auth } = vi.hoisted(() => ({
   },
 }));
 
-vi.mock("@/app/providers", () => ({
+vi.mock("@/app/useAuth", () => ({
   useAuth: () => auth,
 }));
 

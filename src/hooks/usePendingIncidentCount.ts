@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { countPendingIncidents } from "@/services/resources";
 
@@ -13,32 +13,44 @@ export function notifyPendingIncidentsChanged(): void {
 export function usePendingIncidentCount(enabled: boolean): number {
   const { pathname } = useLocation();
   const [count, setCount] = useState(0);
+  const [trackedEnabled, setTrackedEnabled] = useState(enabled);
+  const requestSeq = useRef(0);
 
-  const refresh = useCallback(async () => {
-    if (!enabled) {
-      setCount(0);
-      return;
-    }
-    try {
-      setCount(await countPendingIncidents());
-    } catch {
-      /* el header no debe romper si falla el conteo */
-    }
-  }, [enabled]);
+  if (trackedEnabled !== enabled) {
+    setTrackedEnabled(enabled);
+    if (!enabled) setCount(0);
+  }
+
+  const refresh = useCallback(() => {
+    const seq = ++requestSeq.current;
+    void countPendingIncidents()
+      .then((next) => {
+        if (seq !== requestSeq.current) return;
+        setCount(next);
+      })
+      .catch(() => {
+        /* el header no debe romper si falla el conteo */
+      });
+  }, []);
 
   useEffect(() => {
-    void refresh();
-  }, [refresh, pathname]);
+    if (!enabled) {
+      // La respuesta que todavía no llegó queda fuera de esta secuencia.
+      requestSeq.current += 1;
+      return;
+    }
+    refresh();
+  }, [enabled, pathname, refresh]);
 
   useEffect(() => {
     if (!enabled) return;
 
     const id = window.setInterval(() => {
-      void refresh();
+      refresh();
     }, POLL_MS);
 
     const onChanged = () => {
-      void refresh();
+      refresh();
     };
 
     window.addEventListener(CHANGED_EVENT, onChanged);
@@ -51,5 +63,5 @@ export function usePendingIncidentCount(enabled: boolean): number {
     };
   }, [enabled, refresh]);
 
-  return count;
+  return enabled ? count : 0;
 }

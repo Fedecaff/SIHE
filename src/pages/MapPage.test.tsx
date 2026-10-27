@@ -40,7 +40,7 @@ vi.mock("react-leaflet-cluster", () => ({
   default: ({ children }: { children?: unknown }) => children,
 }));
 
-vi.mock("@/app/providers", () => ({
+vi.mock("@/app/useAuth", () => ({
   useAuth: () => ({ user: null }),
 }));
 

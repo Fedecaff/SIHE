@@ -6,7 +6,7 @@ import { osrmStepInstruction } from "@/lib/osrmManeuvers";
 import type { LatLng } from "@/lib/userLocation";
 import type { ResourceType } from "@/types/sihe";
 
-export type RouteTargetKind = "recurso" | "direccion" | "punto";
+type RouteTargetKind = "recurso" | "direccion" | "punto";
 
 export type RouteTarget = {
   lat: number;
@@ -16,7 +16,7 @@ export type RouteTarget = {
   tipoRecurso?: ResourceType;
 };
 
-export type RouteStep = {
+type RouteStep = {
   instruction: string;
   distanceM: number;
   durationS: number;
@@ -82,7 +82,7 @@ function userMessageForOsrm(code: string, status?: number): string {
   return "No se pudo calcular la ruta.";
 }
 
-export class OSRMProvider implements RoutingProvider {
+class OSRMProvider implements RoutingProvider {
   private readonly baseUrl: string;
 
   constructor(baseUrl: string = ROUTING_BASE_URL) {

@@ -8,7 +8,7 @@ const GEO_OPTIONS: PositionOptions = {
   timeout: 10_000,
 };
 
-export function locateErrorMessage(err?: { code?: number }): string {
+function locateErrorMessage(err?: { code?: number }): string {
   if (typeof navigator === "undefined" || !navigator.geolocation) {
     return "Tu navegador no permite geolocalización.";
   }

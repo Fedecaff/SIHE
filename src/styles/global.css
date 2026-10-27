@@ -848,15 +848,6 @@ a {
   font-size: 13px;
 }
 
-.filter-satellite {
-  flex-basis: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 10px;
-  align-items: flex-end;
-}
-
-.filter-note,
 .map-legend-note {
   margin: 4px 0 0;
   font-size: 12px;
@@ -868,10 +859,6 @@ a {
 .filter-field select:focus-visible {
   outline: 2px solid var(--border-active);
   outline-offset: 1px;
-}
-
-.leaflet-control-layers {
-  max-width: min(260px, 72vw);
 }
 
 .map-body {

@@ -1,6 +1,6 @@
 import { statusColor, statusLabel, typeColor, typeLabel } from "@/lib/resourceLabels";
 import type { ResourceStatus, ResourceType } from "@/types/sihe";
-import { createSvgFromIcon, getIconName } from "@/lib/mapIcons";
+import { createSvgIcon, getIconName } from "@/lib/mapIcons";
 
 const TYPES: ResourceType[] = ["hidrante", "espejo", "tanque"];
 const STATUSES: ResourceStatus[] = [
@@ -56,7 +56,7 @@ export function MapLegend({
                 borderColor: statusColor("operativo"),
               }}
               dangerouslySetInnerHTML={{
-                __html: createSvgFromIcon(getIconName(type), 14, "#fff", 2.5),
+                __html: createSvgIcon(getIconName(type), 14, 2.5, "#fff"),
               }}
             />
             {typeLabel(type)}

@@ -1,5 +1,5 @@
-export type ToolPanel = "filtros" | "capas" | "leyenda";
-export type DetailPanel = "recurso" | "direccion";
+type ToolPanel = "filtros" | "capas" | "leyenda";
+type DetailPanel = "recurso" | "direccion";
 export type SheetHeight = "peek" | "media" | "expandida";
 
 export type MapPanelState = {

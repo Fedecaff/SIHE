@@ -39,7 +39,7 @@ const VIIRS_SOURCES: FirmsSource[] = [
   "VIIRS_NOAA21_NRT",
 ];
 
-export function firmsSourcesFor(choice: FirmsSourceChoice): FirmsSource[] {
+function firmsSourcesFor(choice: FirmsSourceChoice): FirmsSource[] {
   return choice === "viirs_all" ? VIIRS_SOURCES : [choice];
 }
 
@@ -149,7 +149,7 @@ export function parseFirmsCsv(csv: string, source: FirmsSource): FirmsHotspot[] 
   return points;
 }
 
-export function hotspotKey(point: FirmsHotspot): string {
+function hotspotKey(point: FirmsHotspot): string {
   return [
     point.lat.toFixed(5),
     point.lng.toFixed(5),

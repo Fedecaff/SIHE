@@ -1,7 +1,5 @@
 import {
-  createContext,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -23,32 +21,7 @@ import {
   type RouteTarget,
   type RoutingProvider,
 } from "@/services/routing";
-
-type RouteState = {
-  destination: RouteTarget | null;
-  origin: LatLng | null;
-  route: RouteResult | null;
-  loading: boolean;
-  error: string | null;
-  needsOrigin: boolean;
-  pickingOriginOnMap: boolean;
-  pickingDestinationOnMap: boolean;
-  markedPoint: LatLng | null;
-  followLive: boolean;
-  startTo: (target: RouteTarget) => Promise<void>;
-  setOriginFromAddress: (query: string) => Promise<void>;
-  beginPickOriginOnMap: () => void;
-  setOriginFromMap: (point: LatLng) => void;
-  beginPickDestinationOnMap: () => void;
-  setDestinationFromMap: (point: LatLng) => void;
-  startRouteToMarkedPoint: () => Promise<void>;
-  clearMarkedPoint: () => void;
-  cancelPickDestination: () => void;
-  closeRoute: () => void;
-  setFollowLive: (value: boolean) => void;
-};
-
-const RouteContext = createContext<RouteState | null>(null);
+import { RouteContext, type RouteState } from "@/hooks/useRoute";
 
 function isCancelled(err: unknown): boolean {
   return err instanceof RoutingError && err.code === "Cancelled";
@@ -299,12 +272,4 @@ export function RouteProvider({
   return (
     <RouteContext.Provider value={value}>{children}</RouteContext.Provider>
   );
-}
-
-export function useRoute(): RouteState {
-  const ctx = useContext(RouteContext);
-  if (!ctx) {
-    throw new Error("useRoute debe usarse dentro de RouteProvider");
-  }
-  return ctx;
 }
