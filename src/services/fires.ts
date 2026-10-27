@@ -47,6 +47,33 @@ export async function fetchFireEventsMap(
   return (data ?? []) as FireEventMapItem[];
 }
 
+const FIRE_EVENT_ID =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** El id de fire_events es uuid. Un valor de otro formato no se consulta. */
+export function isFireEventId(id: string): boolean {
+  return FIRE_EVENT_ID.test(id);
+}
+
+export async function fetchFireEventById(
+  id: string,
+): Promise<FireEventMapItem | null> {
+  if (!isFireEventId(id)) return null;
+
+  const { data, error } = await supabase
+    .from("fire_events_map")
+    .select(
+      "id, event_type, occurred_at, description, linked_resource_id, lat, lng",
+    )
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message || "No se pudo cargar el incendio");
+  }
+  return (data as FireEventMapItem | null) ?? null;
+}
+
 export async function createFireEventAdmin(input: {
   eventType: FireEventType;
   occurredAt: string;

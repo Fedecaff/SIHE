@@ -3,7 +3,11 @@ import { Link, useParams } from "react-router-dom";
 import { Spinner } from "@/components/ui/Spinner";
 import { toUserMessage } from "@/lib/errorMessages";
 import { formatDateTime } from "@/lib/incidentLabels";
-import { fireTypeLabel, fetchFireEventsMap } from "@/services/fires";
+import {
+  fireTypeLabel,
+  fetchFireEventById,
+  isFireEventId,
+} from "@/services/fires";
 import type { FireEventMapItem } from "@/services/fires";
 
 export function FireDetailPage() {
@@ -13,16 +17,19 @@ export function FireDetailPage() {
 
 function FireDetail() {
   const { id = "" } = useParams();
+  const idValid = isFireEventId(id);
   const [item, setItem] = useState<FireEventMapItem | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(
+    idValid ? null : "Evento no encontrado",
+  );
+  const [loading, setLoading] = useState(idValid);
 
   useEffect(() => {
+    if (!idValid) return;
     let cancelled = false;
-    void fetchFireEventsMap("all")
-      .then((list) => {
+    void fetchFireEventById(id)
+      .then((found) => {
         if (cancelled) return;
-        const found = list.find((f) => f.id === id) ?? null;
         setItem(found);
         if (!found) setError("Evento no encontrado");
       })
@@ -37,7 +44,7 @@ function FireDetail() {
     return () => {
       cancelled = true;
     };
-  }, [id]);
+  }, [id, idValid]);
 
   if (loading) {
     return (
