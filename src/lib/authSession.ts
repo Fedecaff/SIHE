@@ -1,9 +1,9 @@
 import type { UserRole } from "@/types/sihe";
 
-export const REMEMBER_SESSION_KEY = "sihe-remember-session";
+const REMEMBER_SESSION_KEY = "sihe-remember-session";
 export const AUTH_STORAGE_KEY = "sihe-auth";
 
-export const LOGIN_ERROR_CREDENTIALS =
+const LOGIN_ERROR_CREDENTIALS =
   "Email o contraseña incorrectos.";
 export const LOGIN_ERROR_INACTIVE =
   "Su cuenta está desactivada. Contacte al administrador.";
@@ -16,7 +16,7 @@ export function setRememberSession(remember: boolean): void {
   localStorage.removeItem(REMEMBER_SESSION_KEY);
 }
 
-export function shouldRememberSession(): boolean {
+function shouldRememberSession(): boolean {
   return localStorage.getItem(REMEMBER_SESSION_KEY) === "1";
 }
 
