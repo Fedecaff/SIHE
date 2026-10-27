@@ -8,7 +8,7 @@ vi.mock("@/lib/supabase", () => ({
 }));
 
 import { supabase } from "@/lib/supabase";
-import { createFireEventAdmin, fetchFireEventById } from "@/services/fires";
+import { createFireEventAdmin, fetchFireEventById, isFireEventId } from "@/services/fires";
 
 const rpc = vi.mocked(supabase.rpc);
 
@@ -85,5 +85,42 @@ describe("fetchFireEventById", () => {
   it("no consulta si el id no es un uuid", async () => {
     await expect(fetchFireEventById("todos")).resolves.toBeNull();
     expect(supabase.from).not.toHaveBeenCalled();
+  });
+
+  it("lanza un mensaje fijo en español si Supabase devuelve error", async () => {
+    const maybeSingle = vi.fn().mockResolvedValue({
+      data: null,
+      error: { message: "permission denied for table fire_events" },
+    });
+    const eq = vi.fn(() => ({ maybeSingle }));
+    const select = vi.fn(() => ({ eq }));
+    vi.mocked(supabase.from).mockReturnValue({
+      select,
+    } as unknown as ReturnType<typeof supabase.from>);
+
+    await expect(fetchFireEventById(id)).rejects.toThrow(
+      /^No se pudo cargar el incendio$/,
+    );
+  });
+
+  it("devuelve null si no hay registro", async () => {
+    const maybeSingle = vi.fn().mockResolvedValue({ data: null, error: null });
+    const eq = vi.fn(() => ({ maybeSingle }));
+    const select = vi.fn(() => ({ eq }));
+    vi.mocked(supabase.from).mockReturnValue({
+      select,
+    } as unknown as ReturnType<typeof supabase.from>);
+
+    await expect(fetchFireEventById(id)).resolves.toBeNull();
+  });
+});
+
+describe("isFireEventId", () => {
+  it("acepta un uuid", () => {
+    expect(isFireEventId("11111111-1111-4111-8111-111111111111")).toBe(true);
+  });
+
+  it("rechaza un id que no es uuid", () => {
+    expect(isFireEventId("todos")).toBe(false);
   });
 });

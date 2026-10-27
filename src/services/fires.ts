@@ -69,7 +69,7 @@ export async function fetchFireEventById(
     .maybeSingle();
 
   if (error) {
-    throw new Error(error.message || "No se pudo cargar el incendio");
+    throw new Error("No se pudo cargar el incendio");
   }
   return (data as FireEventMapItem | null) ?? null;
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Link2, Map } from "lucide-react";
+import { ArrowLeft, Link2, Map as MapIcon } from "lucide-react";
 import { CircleMarker, MapContainer } from "react-leaflet";
 import { ControlledMapLayers } from "@/components/map/ControlledMapLayers";
 import { Spinner } from "@/components/ui/Spinner";
@@ -101,7 +101,7 @@ function FireDetail() {
       </section>
       <div className="detail-actions">
         <Link to={`/mapa?fire=${item.id}`} className="btn-toolbar detail-icon-link">
-          <Map size={16} strokeWidth={2.5} aria-hidden="true" />
+          <MapIcon size={16} strokeWidth={2.5} aria-hidden="true" />
           Ver en mapa
         </Link>
         {item.linked_resource_id ? (
@@ -150,6 +150,7 @@ function FireLocationMap({ lat, lng }: { lat: number; lng: number }) {
         <CircleMarker
           center={[lat, lng]}
           radius={7}
+          interactive={false}
           pathOptions={{
             color: "#7c2d12",
             weight: 1,

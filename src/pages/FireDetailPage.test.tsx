@@ -9,23 +9,28 @@ const { fetchFireEventById } = vi.hoisted(() => ({
   fetchFireEventById: vi.fn(),
 }));
 
-vi.mock("@/services/fires", () => ({
-  fetchFireEventById,
-  isFireEventId: (id: string) =>
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id),
-  fireTypeLabel: (type: string) => {
-    if (type === "incendio_forestal") return "Incendio forestal";
-    if (type === "incendio_urbano") return "Incendio urbano";
-    return type;
-  },
-}));
+vi.mock("@/services/fires", async () => {
+  const actual = await vi.importActual<typeof import("@/services/fires")>(
+    "@/services/fires",
+  );
+  return {
+    ...actual,
+    fetchFireEventById,
+  };
+});
 
 vi.mock("react-leaflet", () => ({
   MapContainer: ({ children }: { children?: ReactNode }) => (
     <div>{children}</div>
   ),
-  CircleMarker: ({ center }: { center: [number, number] }) => (
-    <span>{`Marcador ${center[0]},${center[1]}`}</span>
+  CircleMarker: ({
+    center,
+    interactive,
+  }: {
+    center: [number, number];
+    interactive?: boolean;
+  }) => (
+    <span data-interactive={String(interactive)}>{`Marcador ${center[0]},${center[1]}`}</span>
   ),
   TileLayer: () => null,
   WMSTileLayer: () => null,
@@ -73,6 +78,9 @@ describe("FireDetailPage", () => {
       screen.getByRole("region", { name: "Mapa del incendio" }),
     ).toBeTruthy();
     expect(screen.getByText("Marcador -28.47,-65.78")).toBeTruthy();
+    expect(
+      screen.getByText("Marcador -28.47,-65.78").getAttribute("data-interactive"),
+    ).toBe("false");
     expect(screen.getByText("Barrio norte")).toBeTruthy();
   });
 
