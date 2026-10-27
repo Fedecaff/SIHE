@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/app/providers";
+import { useAuth } from "@/app/useAuth";
 import { homePathForRole } from "@/lib/authSession";
 import { toUserMessage } from "@/lib/errorMessages";
 

@@ -13,32 +13,38 @@ export function notifyPendingIncidentsChanged(): void {
 export function usePendingIncidentCount(enabled: boolean): number {
   const { pathname } = useLocation();
   const [count, setCount] = useState(0);
+  const [trackedEnabled, setTrackedEnabled] = useState(enabled);
 
-  const refresh = useCallback(async () => {
-    if (!enabled) {
-      setCount(0);
-      return;
-    }
-    try {
-      setCount(await countPendingIncidents());
-    } catch {
-      /* el header no debe romper si falla el conteo */
-    }
-  }, [enabled]);
+  // Con el badge apagado el conteo visible es cero, sin otro render desde el efecto.
+  if (trackedEnabled !== enabled) {
+    setTrackedEnabled(enabled);
+    if (!enabled) setCount(0);
+  }
+
+  const refresh = useCallback(() => {
+    void countPendingIncidents()
+      .then((next) => {
+        setCount(next);
+      })
+      .catch(() => {
+        /* el header no debe romper si falla el conteo */
+      });
+  }, []);
 
   useEffect(() => {
-    void refresh();
-  }, [refresh, pathname]);
+    if (!enabled) return;
+    refresh();
+  }, [enabled, pathname, refresh]);
 
   useEffect(() => {
     if (!enabled) return;
 
     const id = window.setInterval(() => {
-      void refresh();
+      refresh();
     }, POLL_MS);
 
     const onChanged = () => {
-      void refresh();
+      refresh();
     };
 
     window.addEventListener(CHANGED_EVENT, onChanged);

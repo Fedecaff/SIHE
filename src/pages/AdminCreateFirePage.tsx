@@ -7,7 +7,8 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import L from "leaflet";
-import { useAuth, useToast } from "@/app/providers";
+import { useAuth } from "@/app/useAuth";
+import { useToast } from "@/app/useToast";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import { toUserMessage } from "@/lib/errorMessages";
 import {
@@ -62,23 +63,44 @@ export function AdminCreateFirePage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { showToast } = useToast();
-  const [eventType, setEventType] =
-    useState<FireEventType>("incendio_forestal");
-  const [occurredAt, setOccurredAt] = useState(() =>
-    toLocalInputValue(new Date()),
+  const [eventType, setEventType] = useState<FireEventType>(
+    () => loadFormDraft<FireDraft>(user?.id, FIRE_DRAFT)?.eventType || "incendio_forestal",
   );
-  const [description, setDescription] = useState("");
-  const [lat, setLat] = useState<number | null>(null);
-  const [lng, setLng] = useState<number | null>(null);
+  const [occurredAt, setOccurredAt] = useState(
+    () =>
+      loadFormDraft<FireDraft>(user?.id, FIRE_DRAFT)?.occurredAt ||
+      toLocalInputValue(new Date()),
+  );
+  const [description, setDescription] = useState(() => {
+    const draft = loadFormDraft<FireDraft>(user?.id, FIRE_DRAFT);
+    return typeof draft?.description === "string" ? draft.description : "";
+  });
+  const [lat, setLat] = useState<number | null>(() => {
+    const draft = loadFormDraft<FireDraft>(user?.id, FIRE_DRAFT);
+    return typeof draft?.lat === "number" ? draft.lat : null;
+  });
+  const [lng, setLng] = useState<number | null>(() => {
+    const draft = loadFormDraft<FireDraft>(user?.id, FIRE_DRAFT);
+    return typeof draft?.lng === "number" ? draft.lng : null;
+  });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [dirty, setDirty] = useState(false);
+  const [dirty, setDirty] = useState(() => {
+    const draft = loadFormDraft<FireDraft>(user?.id, FIRE_DRAFT);
+    return Boolean(
+      draft?.description ||
+        draft?.lat != null ||
+        (draft?.eventType && draft.eventType !== "incendio_forestal"),
+    );
+  });
   const [allowLeave, setAllowLeave] = useState(false);
-  const [draftReady, setDraftReady] = useState(false);
+  const [loadedUserId, setLoadedUserId] = useState(user?.id);
 
   useUnsavedChanges(dirty && !allowLeave && !saving);
 
-  useEffect(() => {
+  // Si cambia la sesión, se recupera el borrador de ese usuario.
+  if (loadedUserId !== user?.id) {
+    setLoadedUserId(user?.id);
     const draft = loadFormDraft<FireDraft>(user?.id, FIRE_DRAFT);
     if (draft) {
       if (draft.eventType) setEventType(draft.eventType);
@@ -94,11 +116,10 @@ export function AdminCreateFirePage() {
         setDirty(true);
       }
     }
-    setDraftReady(true);
-  }, [user?.id]);
+  }
 
   useEffect(() => {
-    if (!draftReady || allowLeave) return;
+    if (allowLeave) return;
     saveFormDraft(user?.id, FIRE_DRAFT, {
       eventType,
       occurredAt,
@@ -106,7 +127,7 @@ export function AdminCreateFirePage() {
       lat,
       lng,
     });
-  }, [user?.id, draftReady, allowLeave, eventType, occurredAt, description, lat, lng]);
+  }, [user?.id, allowLeave, eventType, occurredAt, description, lat, lng]);
 
   function markDirty() {
     setDirty(true);

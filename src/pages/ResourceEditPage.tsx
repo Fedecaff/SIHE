@@ -2,7 +2,8 @@ import { useEffect, useState, type FormEvent } from "react";
 
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { useAuth, useToast } from "@/app/providers";
+import { useAuth } from "@/app/useAuth";
+import { useToast } from "@/app/useToast";
 import { Spinner } from "@/components/ui/Spinner";
 
 import { toUserMessage } from "@/lib/errorMessages";
@@ -24,6 +25,16 @@ import type { ResourceStatus } from "@/types/sihe";
 
 
 export function ResourceEditPage() {
+
+  const { id = "" } = useParams();
+
+  return <ResourceEditForm key={id} />;
+
+}
+
+
+
+function ResourceEditForm() {
 
   const { id = "" } = useParams();
 
@@ -54,8 +65,6 @@ export function ResourceEditPage() {
     if (!id) return;
 
     let cancelled = false;
-
-    setLoading(true);
 
     void fetchResourceDetail(id)
 

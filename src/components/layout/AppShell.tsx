@@ -1,10 +1,10 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { UserRole } from "@/types/sihe";
-import { useAuth } from "@/app/providers";
+import { useAuth } from "@/app/useAuth";
 import { Header } from "@/components/layout/Header";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import { usePendingIncidentCount } from "@/hooks/usePendingIncidentCount";
-import { RouteProvider } from "@/hooks/useRoute";
+import { RouteProvider } from "@/hooks/RouteProvider";
 
 export function AppShell() {
   const { user } = useAuth();

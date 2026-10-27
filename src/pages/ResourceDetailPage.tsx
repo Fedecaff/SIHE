@@ -4,7 +4,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { useRoute } from "@/hooks/useRoute";
 
-import { useAuth } from "@/app/providers";
+import { useAuth } from "@/app/useAuth";
 import { Spinner } from "@/components/ui/Spinner";
 
 import { toUserMessage } from "@/lib/errorMessages";
@@ -49,6 +49,16 @@ export function ResourceDetailPage() {
 
   const { id = "" } = useParams();
 
+  return <ResourceDetail key={id} />;
+
+}
+
+
+
+function ResourceDetail() {
+
+  const { id = "" } = useParams();
+
   const { user } = useAuth();
 
   const navigate = useNavigate();
@@ -72,10 +82,6 @@ export function ResourceDetailPage() {
     if (!id) return;
 
     let cancelled = false;
-
-    setLoading(true);
-
-    setError(null);
 
     void Promise.all([
 

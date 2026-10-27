@@ -26,31 +26,36 @@ export function ResourceListPage() {
 
   const [items, setItems] = useState<ResourceMapItem[]>([]);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(filters.type !== "ninguno");
 
   const [error, setError] = useState<string | null>(null);
 
   const [page, setPage] = useState(1);
 
+  const resourceQuery = `${filters.type}|${filters.status}`;
+
+  const [trackedResourceQuery, setTrackedResourceQuery] = useState(resourceQuery);
+
+  // Reinicia la página y la carga en este render cuando cambian los filtros.
+  if (trackedResourceQuery !== resourceQuery) {
+    setTrackedResourceQuery(resourceQuery);
+    setError(null);
+    setPage(1);
+    if (filters.type === "ninguno") {
+      setItems([]);
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+  }
+
 
 
   useEffect(() => {
 
+    if (filters.type === "ninguno") return;
+
     let cancelled = false;
-
-    setLoading(true);
-
-    setError(null);
-
-    setPage(1);
-
-    if (filters.type === "ninguno") {
-      setItems([]);
-      setLoading(false);
-      return () => {
-        cancelled = true;
-      };
-    }
 
     void fetchResourcesMap({
 

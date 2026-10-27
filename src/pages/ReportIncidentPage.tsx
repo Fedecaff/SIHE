@@ -2,7 +2,8 @@ import { useEffect, useState, type FormEvent } from "react";
 
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { useAuth, useToast } from "@/app/providers";
+import { useAuth } from "@/app/useAuth";
+import { useToast } from "@/app/useToast";
 import { Spinner } from "@/components/ui/Spinner";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 
@@ -51,14 +52,17 @@ export function ReportIncidentPage() {
 
   const [resourceType, setResourceType] = useState("");
 
-  const [type, setType] = useState<IncidentType>("dano");
+  const [type, setType] = useState<IncidentType>(
+    () => loadFormDraft<IncidentDraft>(user?.id, draftKey)?.type || "dano",
+  );
 
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState(() => {
+    const draft = loadFormDraft<IncidentDraft>(user?.id, draftKey);
+    return typeof draft?.description === "string" ? draft.description : "";
+  });
 
   const [suggestedStatus, setSuggestedStatus] = useState<ResourceStatus | "">(
-
-    "",
-
+    () => loadFormDraft<IncidentDraft>(user?.id, draftKey)?.suggestedStatus ?? "",
   );
 
   const [photo, setPhoto] = useState<File | null>(null);
@@ -69,19 +73,26 @@ export function ReportIncidentPage() {
 
   const [error, setError] = useState<string | null>(null);
 
-  const [dirty, setDirty] = useState(false);
+  const [dirty, setDirty] = useState(() => {
+    const draft = loadFormDraft<IncidentDraft>(user?.id, draftKey);
+    return Boolean(
+      draft?.description ||
+        draft?.suggestedStatus ||
+        (draft?.type && draft.type !== "dano"),
+    );
+  });
 
   const [allowLeave, setAllowLeave] = useState(false);
 
-  const [draftReady, setDraftReady] = useState(false);
+  const draftIdentity = `${user?.id ?? ""}:${draftKey}`;
+
+  const [loadedDraftId, setLoadedDraftId] = useState(draftIdentity);
 
   useUnsavedChanges(dirty && !allowLeave && !saving);
 
-  function markDirty() {
-    setDirty(true);
-  }
-
-  useEffect(() => {
+  // Si cambia el usuario o el recurso, se recupera el borrador guardado.
+  if (loadedDraftId !== draftIdentity) {
+    setLoadedDraftId(draftIdentity);
     const draft = loadFormDraft<IncidentDraft>(user?.id, draftKey);
     if (draft) {
       if (draft.type) setType(draft.type);
@@ -89,21 +100,28 @@ export function ReportIncidentPage() {
       if (draft.suggestedStatus !== undefined) {
         setSuggestedStatus(draft.suggestedStatus);
       }
-      if (draft.description || draft.suggestedStatus || (draft.type && draft.type !== "dano")) {
+      if (
+        draft.description ||
+        draft.suggestedStatus ||
+        (draft.type && draft.type !== "dano")
+      ) {
         setDirty(true);
       }
     }
-    setDraftReady(true);
-  }, [user?.id, draftKey]);
+  }
+
+  function markDirty() {
+    setDirty(true);
+  }
 
   useEffect(() => {
-    if (!draftReady || allowLeave) return;
+    if (allowLeave) return;
     saveFormDraft(user?.id, draftKey, {
       type,
       description,
       suggestedStatus,
     });
-  }, [user?.id, draftKey, draftReady, allowLeave, type, description, suggestedStatus]);
+  }, [user?.id, draftKey, allowLeave, type, description, suggestedStatus]);
 
   useEffect(() => {
 

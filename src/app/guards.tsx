@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import type { UserRole } from "@/types/sihe";
 import { homePathForRole } from "@/lib/authSession";
-import { useAuth } from "@/app/providers";
+import { useAuth } from "@/app/useAuth";
 import { Spinner } from "@/components/ui/Spinner";
 
 export function PublicOnly() {

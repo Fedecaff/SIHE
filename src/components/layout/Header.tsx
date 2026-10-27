@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { UserRole } from "@/types/sihe";
-import { useAuth } from "@/app/providers";
+import { useAuth } from "@/app/useAuth";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import { roleLabel } from "@/lib/roleLabel";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";

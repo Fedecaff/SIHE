@@ -6,9 +6,8 @@ import { UserRole } from "@/types/sihe";
 
 const mockUseAuth = vi.hoisted(() => vi.fn());
 
-vi.mock("@/app/providers", () => ({
+vi.mock("@/app/useAuth", () => ({
   useAuth: mockUseAuth,
-  ToastProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 function renderHeader() {

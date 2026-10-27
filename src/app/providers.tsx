@@ -1,7 +1,5 @@
 import {
-  createContext,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -15,29 +13,13 @@ import {
   loginWithPassword,
   logoutSession,
 } from "@/services/resources";
-
-type AuthState = {
-  user: AuthUser | null;
-  loading: boolean;
-  login: (
-    email: string,
-    password: string,
-    rememberSession?: boolean,
-  ) => Promise<AuthUser>;
-  logout: () => Promise<void>;
-};
+import { AuthContext } from "@/app/useAuth";
+import { ToastContext } from "@/app/useToast";
 
 type ToastItem = {
   id: number;
   text: string;
 };
-
-type ToastState = {
-  showToast: (text: string) => void;
-};
-
-const AuthContext = createContext<AuthState | null>(null);
-const ToastContext = createContext<ToastState | null>(null);
 
 const TOAST_MS = 4000;
 
@@ -112,12 +94,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export function useAuth(): AuthState {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth debe usarse dentro de AuthProvider");
-  return ctx;
-}
-
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<ToastItem[]>([]);
   const nextId = useRef(1);
@@ -147,10 +123,4 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       ) : null}
     </ToastContext.Provider>
   );
-}
-
-export function useToast(): ToastState {
-  const ctx = useContext(ToastContext);
-  if (!ctx) throw new Error("useToast debe usarse dentro de ToastProvider");
-  return ctx;
 }

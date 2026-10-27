@@ -43,20 +43,14 @@ vi.mock("@/hooks/useUnsavedChanges", () => ({
   useUnsavedChanges: () => undefined,
 }));
 
-vi.mock("@/app/providers", async () => {
-  const actual = await vi.importActual<typeof import("@/app/providers")>(
-    "@/app/providers",
-  );
-  return {
-    ...actual,
-    useAuth: () => ({
-      user: { id: "user-test", name: "Test", role: "administrador" },
-      loading: false,
-      login: vi.fn(),
-      logout: vi.fn(),
-    }),
-  };
-});
+vi.mock("@/app/useAuth", () => ({
+  useAuth: () => ({
+    user: { id: "user-test", name: "Test", role: "administrador" },
+    loading: false,
+    login: vi.fn(),
+    logout: vi.fn(),
+  }),
+}));
 
 function renderPage() {
   return render(

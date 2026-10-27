@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useAuth } from "@/app/providers";
+import { useAuth } from "@/app/useAuth";
 import type { ResourceMapItem } from "@/types/sihe";
 import { MapActionRail } from "@/components/map/MapActionRail";
 import { MapBottomSheet } from "@/components/map/MapBottomSheet";
@@ -61,7 +61,7 @@ export function MapPage() {
   const focusId = searchParams.get("focus");
   const focusFireId = searchParams.get("fire");
   const [items, setItems] = useState<ResourceMapItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(filters.type !== "ninguno");
   const [error, setError] = useState<string | null>(null);
   const [locateToken, setLocateToken] = useState(0);
   const [homeToken, setHomeToken] = useState(0);
@@ -81,11 +81,33 @@ export function MapPage() {
   const [showFirePoints, setShowFirePoints] = useState(Boolean(focusFireId));
   const [firePeriod, setFirePeriod] = useState<FirePeriod>("12m");
   const [fireEvents, setFireEvents] = useState<FireEventMapItem[]>([]);
+  const firesOn = showFireHeat || showFirePoints;
+  const [trackedFiresOn, setTrackedFiresOn] = useState(firesOn);
+  const resourceQuery = `${filters.type}|${filters.status}`;
+  const [trackedResourceQuery, setTrackedResourceQuery] = useState(resourceQuery);
   const [dismissed, setDismissed] = useState<string[]>([]);
   const [desktopOpen, setDesktopOpen] = useState(wide);
   const [toolTab, setToolTab] = useState<"filtros" | "capas" | "leyenda">("filtros");
   const returnFocus = useRef<string | null>(null);
   const closeSheetRef = useRef<() => void>(() => undefined);
+
+  // Reinicia la carga en este render cuando cambia el filtro.
+  if (trackedResourceQuery !== resourceQuery) {
+    setTrackedResourceQuery(resourceQuery);
+    setError(null);
+    if (filters.type === "ninguno") {
+      setItems([]);
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+  }
+
+  // Al apagar las capas, el mapa deja de mostrar eventos sin esperar al efecto.
+  if (trackedFiresOn !== firesOn) {
+    setTrackedFiresOn(firesOn);
+    if (!firesOn) setFireEvents([]);
+  }
 
   useEffect(() => {
     if (panel.tool || !returnFocus.current) return;
@@ -127,16 +149,8 @@ export function MapPage() {
   }, []);
 
   useEffect(() => {
+    if (filters.type === "ninguno") return;
     let cancelled = false;
-    setLoading(true);
-    setError(null);
-    if (filters.type === "ninguno") {
-      setItems([]);
-      setLoading(false);
-      return () => {
-        cancelled = true;
-      };
-    }
     void fetchResourcesMap({
       type: filters.type || undefined,
       status: filters.status || undefined,
@@ -158,10 +172,7 @@ export function MapPage() {
   }, [filters.type, filters.status]);
 
   useEffect(() => {
-    if (!showFireHeat && !showFirePoints) {
-      setFireEvents([]);
-      return;
-    }
+    if (!firesOn) return;
     let cancelled = false;
     void fetchFireEventsMap(firePeriod)
       .then((data) => {
@@ -177,7 +188,7 @@ export function MapPage() {
     return () => {
       cancelled = true;
     };
-  }, [showFireHeat, showFirePoints, firePeriod]);
+  }, [firesOn, firePeriod]);
 
   async function handleAddressSearch() {
     const q = addressQuery.trim();

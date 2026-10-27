@@ -1,6 +1,7 @@
 import { renderHook, act } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { RouteProvider, useRoute } from "./useRoute";
+import { RouteProvider } from "./RouteProvider";
+import { useRoute } from "./useRoute";
 
 vi.mock("@/services/geocode", () => ({
   geocodeCityAddress: vi.fn().mockResolvedValue({ lat: -28.5, lng: -65.8 }),

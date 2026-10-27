@@ -16,6 +16,16 @@ export function FireDetailPage() {
 
   const { id = "" } = useParams();
 
+  return <FireDetail key={id} />;
+
+}
+
+
+
+function FireDetail() {
+
+  const { id = "" } = useParams();
+
   const [item, setItem] = useState<FireEventMapItem | null>(null);
 
   const [error, setError] = useState<string | null>(null);
@@ -27,8 +37,6 @@ export function FireDetailPage() {
   useEffect(() => {
 
     let cancelled = false;
-
-    setLoading(true);
 
     void fetchFireEventsMap("all")
 

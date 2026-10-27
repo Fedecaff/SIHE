@@ -78,9 +78,13 @@ export function AdminUsersPage() {
 
     let cancelled = false;
 
-    setLoading(true);
+    void listProfiles()
 
-    void reload()
+      .then((data) => {
+
+        if (!cancelled) setUsers(data);
+
+      })
 
       .catch((err: unknown) => {
 

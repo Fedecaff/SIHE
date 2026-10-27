@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
-import { useAuth } from "@/app/providers";
+import { useAuth } from "@/app/useAuth";
 import { Spinner } from "@/components/ui/Spinner";
 import { notifyPendingIncidentsChanged } from "@/hooks/usePendingIncidentCount";
 import { toUserMessage } from "@/lib/errorMessages";
@@ -41,6 +41,8 @@ export function AdminIncidentsPage() {
 
   const [filter, setFilter] = useState<IncidentStatus | "todas">("pendiente");
 
+  const [trackedFilter, setTrackedFilter] = useState(filter);
+
   const [items, setItems] = useState<AdminIncidentRow[]>([]);
 
   const [loading, setLoading] = useState(true);
@@ -52,6 +54,13 @@ export function AdminIncidentsPage() {
   const [busyId, setBusyId] = useState<string | null>(null);
 
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+
+  // Al cambiar el filtro, la lista vuelve a cargarse en este render.
+  if (trackedFilter !== filter) {
+    setTrackedFilter(filter);
+    setLoading(true);
+    setError(null);
+  }
 
 
 
@@ -83,7 +92,33 @@ export function AdminIncidentsPage() {
 
   useEffect(() => {
 
-    void reload(filter);
+    let cancelled = false;
+
+    void listIncidentsForAdmin(filter)
+
+      .then((data) => {
+
+        if (!cancelled) setItems(data);
+
+      })
+
+      .catch((err: unknown) => {
+
+        if (!cancelled) setError(toUserMessage(err, "Error al cargar"));
+
+      })
+
+      .finally(() => {
+
+        if (!cancelled) setLoading(false);
+
+      });
+
+    return () => {
+
+      cancelled = true;
+
+    };
 
   }, [filter]);
 
