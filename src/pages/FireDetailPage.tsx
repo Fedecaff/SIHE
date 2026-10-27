@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { CircleMarker, MapContainer } from "react-leaflet";
+import { ControlledMapLayers } from "@/components/map/ControlledMapLayers";
 import { Spinner } from "@/components/ui/Spinner";
 import { toUserMessage } from "@/lib/errorMessages";
 import { formatDateTime } from "@/lib/incidentLabels";
+import { BASE_LAYER_OSM } from "@/lib/mapConstants";
+import { formatMapCoords } from "@/services/geocode";
 import {
   fireTypeLabel,
   fetchFireEventById,
@@ -57,7 +61,9 @@ function FireDetail() {
   if (error || !item) {
     return (
       <div className="page-panel">
-        <p className="form-error">{error ?? "No encontrado"}</p>
+        <p className="form-error" role="alert">
+          {error ?? "No encontrado"}
+        </p>
         <Link to="/mapa" className="btn-toolbar">
           Volver al mapa
         </Link>
@@ -76,8 +82,18 @@ function FireDetail() {
             <dd>{formatDateTime(item.occurred_at)}</dd>
           </div>
           <div>
-            <dt>Descripción</dt>
+            <dt>Nota</dt>
             <dd>{item.description || "—"}</dd>
+          </div>
+        </dl>
+      </section>
+      <section className="detail-card">
+        <h2>Ubicación</h2>
+        <FireLocationMap lat={item.lat} lng={item.lng} />
+        <dl className="detail-grid">
+          <div>
+            <dt>Coordenadas</dt>
+            <dd>{formatMapCoords(item.lat, item.lng)}</dd>
           </div>
         </dl>
       </section>
@@ -94,6 +110,44 @@ function FireDetail() {
           </Link>
         ) : null}
       </div>
+    </div>
+  );
+}
+
+function FireLocationMap({ lat, lng }: { lat: number; lng: number }) {
+  return (
+    <div className="create-map" role="region" aria-label="Mapa del incendio">
+      <MapContainer
+        center={[lat, lng]}
+        zoom={16}
+        className="create-map-canvas"
+        dragging={false}
+        scrollWheelZoom={false}
+        doubleClickZoom={false}
+        touchZoom={false}
+        boxZoom={false}
+        keyboard={false}
+        zoomControl={false}
+      >
+        <ControlledMapLayers
+          baseLayer={BASE_LAYER_OSM}
+          overlays={[]}
+          date=""
+          opacity={1}
+          hotspots={[]}
+          onTileError={() => undefined}
+        />
+        <CircleMarker
+          center={[lat, lng]}
+          radius={7}
+          pathOptions={{
+            color: "#7c2d12",
+            weight: 1,
+            fillColor: "#f97316",
+            fillOpacity: 0.95,
+          }}
+        />
+      </MapContainer>
     </div>
   );
 }
