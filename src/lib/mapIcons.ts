@@ -7,16 +7,16 @@ const svgCache = new Map<string, string>();
 
 const SIZE = 22;
 
-// Icon paths from multiple open-source libraries:
-// - Tabler Icons v3.49.0 (MIT License) https://tabler.io/icons
-// - IconOven (MIT License) https://iconoven.com
-// - Lucide v1.61.0 (ISC License) https://lucide.dev
+// Los marcadores de Leaflet se arman con HTML, así que el trazo va embebido.
+// Lucide v1.61.0 (ISC) https://lucide.dev
+// Tabler Icons v3.49.0 (MIT) https://tabler.io/icons
+// IconOven (MIT) https://iconoven.com
 const iconPaths: Record<string, string> = {
-  // Lucide: droplet (water drop) - ISC License
+  // Gota. Lucide, ISC.
   Droplet: '<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z" />',
-  // Tabler Icons: fire-hydrant (outline) - MIT License
+  // Hidrante. Tabler Icons, MIT.
   FireHydrant: '<path d="M5 21h14" /><path d="M17 21v-5h1a1 1 0 0 0 1 -1v-2a1 1 0 0 0 -1 -1h-1v-4a5 5 0 0 0 -10 0v4h-1a1 1 0 0 0 -1 1v2a1 1 0 0 0 1 1h1v5" /><path d="M10 14a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M6 8h12" />',
-  // IconOven: water-tower (tank on elevated structure) - MIT License
+  // Tanque elevado. IconOven, MIT.
   WaterTower: '<rect width="14.5" height="8.5" x="4.75" y="2.75" rx="3"/><path d="M4.75 7h14.5m-12.5 4v10.25M17.25 11v10.25M6.75 17h3.5m3.5 0h3.5M12 11.25v10"/>',
 };
 

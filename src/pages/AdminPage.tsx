@@ -21,9 +21,9 @@ export function AdminPage() {
 
     void countPendingIncidents()
 
-      .then((n) => {
+      .then((pendingCount) => {
 
-        if (!cancelled) setPending(n);
+        if (!cancelled) setPending(pendingCount);
 
       })
 

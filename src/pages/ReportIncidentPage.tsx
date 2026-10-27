@@ -131,13 +131,13 @@ export function ReportIncidentPage() {
 
     void fetchResourceDetail(id)
 
-      .then((r) => {
+      .then((resource) => {
 
         if (cancelled) return;
 
-        setResourceName(r.name);
+        setResourceName(resource.name);
 
-        setResourceType(typeLabel(r.type));
+        setResourceType(typeLabel(resource.type));
 
       })
 

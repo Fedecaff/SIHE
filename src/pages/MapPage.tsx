@@ -191,12 +191,12 @@ export function MapPage() {
   }, [firesOn, firePeriod]);
 
   async function handleAddressSearch() {
-    const q = addressQuery.trim();
-    if (!q) return;
+    const query = addressQuery.trim();
+    if (!query) return;
     setAddressSearching(true);
     setError(null);
     try {
-      const result = await geocodeCityAddress(q);
+      const result = await geocodeCityAddress(query);
       setAddressTarget((prev) => ({
         lat: result.lat,
         lng: result.lng,

@@ -38,6 +38,6 @@ export function clearFormDraft(userId: string | undefined, form: string): void {
   try {
     localStorage.removeItem(keyFor(userId, form));
   } catch {
-    // ignore
+    // se ignora: el borrador es opcional
   }
 }

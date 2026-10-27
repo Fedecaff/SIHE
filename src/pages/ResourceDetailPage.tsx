@@ -93,15 +93,15 @@ function ResourceDetail() {
 
     ])
 
-      .then(([detail, hist, incs]) => {
+      .then(([detail, history, pendingIncidents]) => {
 
         if (cancelled) return;
 
         setResource(detail);
 
-        setHistory(hist);
+        setHistory(history);
 
-        setPending(incs);
+        setPending(pendingIncidents);
 
       })
 

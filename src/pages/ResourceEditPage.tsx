@@ -68,17 +68,17 @@ function ResourceEditForm() {
 
     void fetchResourceDetail(id)
 
-      .then((r) => {
+      .then((resource) => {
 
         if (cancelled) return;
 
-        setName(r.name);
+        setName(resource.name);
 
-        setTypeLabelText(typeLabel(r.type));
+        setTypeLabelText(typeLabel(resource.type));
 
-        setStatus(r.status);
+        setStatus(resource.status);
 
-        setObservations(r.observations ?? "");
+        setObservations(resource.observations ?? "");
 
       })
 
