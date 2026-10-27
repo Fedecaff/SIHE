@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { ArrowLeft, Link2, Map } from "lucide-react";
 import { CircleMarker, MapContainer } from "react-leaflet";
 import { ControlledMapLayers } from "@/components/map/ControlledMapLayers";
 import { Spinner } from "@/components/ui/Spinner";
@@ -64,7 +65,8 @@ function FireDetail() {
         <p className="form-error" role="alert">
           {error ?? "No encontrado"}
         </p>
-        <Link to="/mapa" className="btn-toolbar">
+        <Link to="/mapa" className="btn-toolbar detail-icon-link">
+          <ArrowLeft size={16} strokeWidth={2.5} aria-hidden="true" />
           Volver al mapa
         </Link>
       </div>
@@ -98,18 +100,26 @@ function FireDetail() {
         </dl>
       </section>
       <div className="detail-actions">
-        <Link to={`/mapa?fire=${item.id}`} className="btn-toolbar">
+        <Link to={`/mapa?fire=${item.id}`} className="btn-toolbar detail-icon-link">
+          <Map size={16} strokeWidth={2.5} aria-hidden="true" />
           Ver en mapa
         </Link>
         {item.linked_resource_id ? (
           <Link
             to={`/recursos/${item.linked_resource_id}`}
-            className="btn-toolbar"
+            className="btn-toolbar detail-icon-link"
           >
+            <Link2 size={16} strokeWidth={2.5} aria-hidden="true" />
             Recurso vinculado
           </Link>
         ) : null}
       </div>
+      <p className="detail-back">
+        <Link to="/mapa" className="detail-icon-link">
+          <ArrowLeft size={16} strokeWidth={2.5} aria-hidden="true" />
+          Volver al mapa
+        </Link>
+      </p>
     </div>
   );
 }

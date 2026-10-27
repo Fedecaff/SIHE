@@ -1262,6 +1262,12 @@ a {
   font-weight: 600;
 }
 
+.detail-icon-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 /* Modificador de ancho: se combina con btn-primary / btn-secondary / btn-toolbar */
 .btn-inline {
   width: auto;
