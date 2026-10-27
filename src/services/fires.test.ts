@@ -3,11 +3,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 vi.mock("@/lib/supabase", () => ({
   supabase: {
     rpc: vi.fn(),
+    from: vi.fn(),
   },
 }));
 
 import { supabase } from "@/lib/supabase";
-import { createFireEventAdmin } from "@/services/fires";
+import { createFireEventAdmin, fetchFireEventById } from "@/services/fires";
 
 const rpc = vi.mocked(supabase.rpc);
 
@@ -44,5 +45,45 @@ describe("createFireEventAdmin", () => {
     await expect(
       createFireEventAdmin({ ...input, description: "parte" }),
     ).rejects.toThrow("sin permiso");
+  });
+});
+
+describe("fetchFireEventById", () => {
+  const id = "11111111-1111-4111-8111-111111111111";
+
+  beforeEach(() => {
+    vi.mocked(supabase.from).mockReset();
+  });
+
+  it("consulta por id y no trae todos los registros", async () => {
+    const row = {
+      id,
+      event_type: "incendio_forestal",
+      occurred_at: "2024-06-01T18:30:00.000Z",
+      description: "parte",
+      linked_resource_id: null,
+      lat: -28.47,
+      lng: -65.78,
+    };
+    const maybeSingle = vi.fn().mockResolvedValue({ data: row, error: null });
+    const eq = vi.fn(() => ({ maybeSingle }));
+    const select = vi.fn(() => ({ eq }));
+    vi.mocked(supabase.from).mockReturnValue({
+      select,
+    } as unknown as ReturnType<typeof supabase.from>);
+
+    await expect(fetchFireEventById(id)).resolves.toEqual(row);
+
+    expect(supabase.from).toHaveBeenCalledTimes(1);
+    expect(supabase.from).toHaveBeenCalledWith("fire_events_map");
+    expect(select).toHaveBeenCalledTimes(1);
+    expect(eq).toHaveBeenCalledTimes(1);
+    expect(eq).toHaveBeenCalledWith("id", id);
+    expect(maybeSingle).toHaveBeenCalledTimes(1);
+  });
+
+  it("no consulta si el id no es un uuid", async () => {
+    await expect(fetchFireEventById("todos")).resolves.toBeNull();
+    expect(supabase.from).not.toHaveBeenCalled();
   });
 });
