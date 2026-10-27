@@ -40,4 +40,42 @@ describe("usePendingIncidentCount", () => {
 
     expect(result.current).toBe(0);
   });
+
+  it("al volver a prenderlo descarta la respuesta vieja y muestra la nueva", async () => {
+    const pending: Array<(value: number) => void> = [];
+    countPendingIncidents.mockImplementation(
+      () =>
+        new Promise<number>((resolve) => {
+          pending.push(resolve);
+        }),
+    );
+
+    const { result, rerender } = renderHook(
+      ({ enabled }: { enabled: boolean }) => usePendingIncidentCount(enabled),
+      { wrapper: Wrapper, initialProps: { enabled: true } },
+    );
+
+    expect(pending).toHaveLength(1);
+
+    rerender({ enabled: false });
+
+    await act(async () => {
+      pending[0](4);
+      await Promise.resolve();
+    });
+
+    expect(result.current).toBe(0);
+
+    rerender({ enabled: true });
+
+    expect(pending).toHaveLength(2);
+    expect(result.current).toBe(0);
+
+    await act(async () => {
+      pending[1](7);
+      await Promise.resolve();
+    });
+
+    expect(result.current).toBe(7);
+  });
 });
