@@ -29,7 +29,6 @@ type Props = {
   onAddressSearch?: () => void;
   addressSearching?: boolean;
   fireLayers?: FireLayerControls;
-  satellite?: ReactNode;
 };
 
 export function FilterPanel({
@@ -44,7 +43,6 @@ export function FilterPanel({
   onAddressSearch,
   addressSearching,
   fireLayers,
-  satellite,
 }: Props) {
   const showAddress = onAddressChange != null && onAddressSearch != null;
 
@@ -145,8 +143,6 @@ export function FilterPanel({
           </label>
         </div>
       ) : null}
-
-      {satellite}
 
       <div className="filter-actions">
         <button type="button" className="btn-toolbar" onClick={onClear}>
