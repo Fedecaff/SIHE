@@ -1,3 +1,6 @@
+import { useEffect, useRef } from "react";
+import { toast } from "sonner";
+
 export type MapToast = {
   id: string;
   text: string;
@@ -10,24 +13,43 @@ type Props = {
 };
 
 export function MapToasts({ items, onDismiss }: Props) {
-  if (items.length === 0) return null;
-  return (
-    <div className="map-toasts">
-      {items.map((item) => (
-        <p key={item.id} className={`map-toast is-${item.tone}`} role={item.tone}>
-          <span className="map-toast-icon" aria-hidden="true">
-            {item.tone === "alert" ? "!" : "i"}
-          </span>
-          <span>{item.text}</span>
-          <button
-            type="button"
-            aria-label={`Descartar: ${item.text}`}
-            onClick={() => onDismiss(item)}
-          >
-            Cerrar
-          </button>
-        </p>
-      ))}
-    </div>
-  );
+  const onDismissRef = useRef(onDismiss);
+  const activeIds = useRef(new Set<string>());
+
+  useEffect(() => {
+    onDismissRef.current = onDismiss;
+  }, [onDismiss]);
+
+  useEffect(() => {
+    const nextIds = new Set(items.map((item) => `map-${item.id}`));
+    const removedIds = [...activeIds.current].filter((id) => !nextIds.has(id));
+    activeIds.current = nextIds;
+
+    for (const id of removedIds) {
+      toast.dismiss(id);
+    }
+
+    for (const item of items) {
+      const id = `map-${item.id}`;
+      const options = {
+        id,
+        duration: Infinity,
+        closeButton: true,
+        closeButtonAriaLabel: `Descartar: ${item.text}`,
+        onDismiss: () => {
+          if (activeIds.current.has(id)) {
+            onDismissRef.current(item);
+          }
+        },
+      };
+
+      if (item.tone === "alert") {
+        toast.error(item.text, options);
+      } else {
+        toast.info(item.text, options);
+      }
+    }
+  }, [items]);
+
+  return null;
 }

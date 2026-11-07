@@ -2,10 +2,10 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
   type ReactNode,
 } from "react";
+import { toast } from "sonner";
 import type { AuthUser } from "@/types/sihe";
 import { supabase } from "@/lib/supabase";
 import {
@@ -15,13 +15,6 @@ import {
 } from "@/services/resources";
 import { AuthContext } from "@/app/useAuth";
 import { ToastContext } from "@/app/useToast";
-
-type ToastItem = {
-  id: number;
-  text: string;
-};
-
-const TOAST_MS = 4000;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -95,16 +88,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 }
 
 export function ToastProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<ToastItem[]>([]);
-  const nextId = useRef(1);
-
   const showToast = useCallback((text: string) => {
-    const id = nextId.current;
-    nextId.current += 1;
-    setItems((current) => [...current, { id, text }]);
-    window.setTimeout(() => {
-      setItems((current) => current.filter((item) => item.id !== id));
-    }, TOAST_MS);
+    toast(text, { duration: 4000 });
   }, []);
 
   const value = useMemo(() => ({ showToast }), [showToast]);
@@ -112,15 +97,6 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      {items.length > 0 ? (
-        <div className="app-toasts" aria-live="polite">
-          {items.map((item) => (
-            <p key={item.id} className="app-toast" role="status">
-              {item.text}
-            </p>
-          ))}
-        </div>
-      ) : null}
     </ToastContext.Provider>
   );
 }

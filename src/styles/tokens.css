@@ -1,28 +1,31 @@
 :root {
-  --color-primary: #1e3a4c;
-  --color-primary-soft: #254a61;
-  --color-accent: #b42318;
-  --color-bg: #e8eaed;
-  --color-surface: #ffffff;
-  --color-border: #c4c9d1;
-  --color-border-strong: #6b7280;
-  --color-text: #1a1a1a;
-  --color-muted: #3f3f46;
-  --color-placeholder: #52525b;
-  --color-warning-bg: #fff3cd;
+  --color-primary: #1f2328;
+  --color-primary-soft: #343a40;
+  --color-accent: #c2410c;
+  --color-accent-red: #dc2626;
+  --color-warning: #f59e0b;
+  --color-bg: #f4f1eb;
+  --color-surface: #fffefb;
+  --color-border: #d5cec2;
+  --color-border-strong: #6b6258;
+  --color-text: #1f2328;
+  --color-muted: #4b5563;
+  --color-placeholder: #59636e;
+  --color-warning-bg: #fff4d6;
+  --color-warning-text: #573600;
 
   /* Paleta de botones y controles interactivos */
-  --btn-primary-bg: #1e67b5;
-  --btn-primary-hover: #1a5a9d;
-  --btn-primary-disabled: #94a3b8;
-  --btn-secondary-hover: #f3f4f6;
-  --btn-danger-bg: #dc2626;
+  --btn-primary-bg: #1f2328;
+  --btn-primary-hover: #343a40;
+  --btn-primary-disabled: #6b7280;
+  --btn-secondary-hover: #f2ede5;
+  --btn-danger-bg: var(--color-accent-red);
   --btn-danger-hover: #b91c1c;
-  --border-active: #1e67b5;
+  --border-active: #c2410c;
 
-  --radius: 12px;
+  --radius: 10px;
   --radius-sm: 8px;
-  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font: "Inter Variable", Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
   --ease: 150ms ease;
 
   --header-h: 48px;
@@ -30,8 +33,8 @@
   --touch-min: 44px;
   --btn-map: 48px;
   --map-gap: 8px;
-  --panel-shadow: 0 4px 18px rgba(15, 23, 42, 0.1);
-  --panel-shadow-soft: 0 1px 4px rgba(15, 23, 42, 0.06);
+  --panel-shadow: 0 8px 24px rgba(31, 35, 40, 0.12);
+  --panel-shadow-soft: 0 2px 8px rgba(31, 35, 40, 0.08);
 
   /* .map-canvas crea un contexto de apilamiento (z-index distinto de auto).
      Los panes (200–700) y controles (800–1000) de Leaflet viven adentro
@@ -43,16 +46,16 @@
   --z-app-nav: 40;
   --z-modal: 100;
   
-  --cluster-small-bg: rgba(59, 130, 246, 0.4);
-  --cluster-small-fg: #3b82f6;
-  --cluster-medium-bg: rgba(249, 115, 22, 0.4);
-  --cluster-medium-fg: #f97316;
-  --cluster-large-bg: rgba(239, 68, 68, 0.4);
-  --cluster-large-fg: #ef4444;
+  --cluster-small-bg: rgba(154, 52, 18, 0.2);
+  --cluster-small-fg: #9a3412;
+  --cluster-medium-bg: rgba(194, 65, 12, 0.2);
+  --cluster-medium-fg: #c2410c;
+  --cluster-large-bg: rgba(185, 28, 28, 0.2);
+  --cluster-large-fg: #b91c1c;
   
-  --icon-user-bg: #0ea5e9;
+  --icon-user-bg: #0369a1;
   --icon-address-color: #2563eb;
-  --icon-origin-bg: #22c55e;
+  --icon-origin-bg: #15803d;
   --icon-dest-color: #dc2626;
 }
 
