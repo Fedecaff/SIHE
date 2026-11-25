@@ -85,6 +85,23 @@ const userIcon = L.divIcon({
   iconAnchor: [12, 12],
 });
 
+function fireMarkerTitle(fire: FireEventMapItem): string {
+  const name = fire.description?.trim() || fireTypeLabel(fire.event_type);
+  return `Incendio: ${name}`;
+}
+
+function resourceMarkerTitle(item: ResourceMapItem): string {
+  return item.name.trim() || item.address.trim() || "Recurso";
+}
+
+function markerTitleHandlers(title: string) {
+  return {
+    add(event: { target: { getElement?: () => Element | undefined } }) {
+      event.target.getElement?.()?.setAttribute("title", title);
+    },
+  };
+}
+
 function LocateControl({
   token,
   onUserLocation,
@@ -322,6 +339,7 @@ export function MapView({
                 fillColor: "#f97316",
                 fillOpacity: 0.95,
               }}
+              eventHandlers={markerTitleHandlers(fireMarkerTitle(fire))}
             >
               <Popup>
                 <strong>{fireTypeLabel(fire.event_type)}</strong>
@@ -341,6 +359,7 @@ export function MapView({
           pane="resources"
           position={[userLocation.lat, userLocation.lng]}
           icon={userIcon}
+          title="Tu ubicación"
         >
           <Popup>Tu ubicación</Popup>
         </Marker>
@@ -351,6 +370,7 @@ export function MapView({
           pane="resources"
           position={[addressTarget.lat, addressTarget.lng]}
           icon={addressIcon}
+          title={addressLabel?.trim() || "Dirección buscada"}
         >
           <Popup>
             <strong>{addressLabel || "Dirección buscada"}</strong>
@@ -369,7 +389,7 @@ export function MapView({
           if (count >= 100) sizeClass = "large";
           else if (count >= 10) sizeClass = "medium";
           return L.divIcon({
-            html: `<div><span>${count}</span></div>`,
+            html: `<div title="Grupo de ${count} recursos"><span>${count}</span></div>`,
             className: `marker-cluster marker-cluster-${sizeClass}`,
             iconSize: L.point(40, 40),
           });
@@ -381,6 +401,7 @@ export function MapView({
             pane="resources"
             position={position}
             icon={icon}
+            title={resourceMarkerTitle(item)}
             eventHandlers={{
               click: () => onSelectResource?.(item),
             }}
