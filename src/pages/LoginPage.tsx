@@ -28,7 +28,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="login-shell">
+    <main className="login-shell">
       <div className="login-stack">
         <form className="login-card" onSubmit={onSubmit} noValidate>
           <h1 className="login-brand">SIHE</h1>
@@ -81,6 +81,6 @@ export function LoginPage() {
           Sin registro público. El administrador crea las cuentas.
         </p>
       </div>
-    </div>
+    </main>
   );
 }

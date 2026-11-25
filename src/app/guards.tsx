@@ -6,21 +6,39 @@ import { Spinner } from "@/components/ui/Spinner";
 
 export function PublicOnly() {
   const { user, loading } = useAuth();
-  if (loading) return <Spinner className="page-center" />;
+  if (loading) {
+    return (
+      <main>
+        <Spinner className="page-center" />
+      </main>
+    );
+  }
   if (user) return <Navigate to={homePathForRole(user.role)} replace />;
   return <Outlet />;
 }
 
 export function RequireAuth() {
   const { user, loading } = useAuth();
-  if (loading) return <Spinner className="page-center" />;
+  if (loading) {
+    return (
+      <main>
+        <Spinner className="page-center" />
+      </main>
+    );
+  }
   if (!user) return <Navigate to="/login" replace />;
   return <Outlet />;
 }
 
 export function RequireRole({ roles }: { roles: UserRole[] }) {
   const { user, loading } = useAuth();
-  if (loading) return <Spinner className="page-center" />;
+  if (loading) {
+    return (
+      <main>
+        <Spinner className="page-center" />
+      </main>
+    );
+  }
   if (!user) return <Navigate to="/login" replace />;
   if (!roles.includes(user.role)) return <Navigate to="/mapa" replace />;
   return <Outlet />;

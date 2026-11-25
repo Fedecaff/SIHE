@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { AppShell } from "@/components/layout/AppShell";
 import { MapPage } from "@/pages/MapPage";
 
 const { closeRoute } = vi.hoisted(() => ({
@@ -82,33 +83,37 @@ vi.mock("@/hooks/useSatelliteLayers", () => ({
   }),
 }));
 
-vi.mock("@/hooks/useRoute", () => ({
-  useRoute: () => ({
-    destination: {
-      lat: -28.47,
-      lng: -65.78,
-      label: "Cuartel",
-      kind: "direccion" as const,
-    },
-    origin: { lat: -28.5, lng: -65.8 },
-    route: { geometry: [], distanceM: 1200, durationS: 240, steps: [] },
-    loading: false,
-    error: null,
-    needsOrigin: false,
-    pickingOriginOnMap: false,
-    pickingDestinationOnMap: false,
-    followLive: false,
-    startTo: vi.fn(),
-    setOriginFromAddress: vi.fn(),
-    beginPickOriginOnMap: vi.fn(),
-    setOriginFromMap: vi.fn(),
-    beginPickDestinationOnMap: vi.fn(),
-    setDestinationFromMap: vi.fn(),
-    cancelPickDestination: vi.fn(),
-    closeRoute,
-    setFollowLive: vi.fn(),
-  }),
-}));
+vi.mock("@/hooks/useRoute", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/hooks/useRoute")>();
+  return {
+    ...actual,
+    useRoute: () => ({
+      destination: {
+        lat: -28.47,
+        lng: -65.78,
+        label: "Cuartel",
+        kind: "direccion" as const,
+      },
+      origin: { lat: -28.5, lng: -65.8 },
+      route: { geometry: [], distanceM: 1200, durationS: 240, steps: [] },
+      loading: false,
+      error: null,
+      needsOrigin: false,
+      pickingOriginOnMap: false,
+      pickingDestinationOnMap: false,
+      followLive: false,
+      startTo: vi.fn(),
+      setOriginFromAddress: vi.fn(),
+      beginPickOriginOnMap: vi.fn(),
+      setOriginFromMap: vi.fn(),
+      beginPickDestinationOnMap: vi.fn(),
+      setDestinationFromMap: vi.fn(),
+      cancelPickDestination: vi.fn(),
+      closeRoute,
+      setFollowLive: vi.fn(),
+    }),
+  };
+});
 
 describe("MapPage", () => {
   beforeEach(() => {
@@ -165,5 +170,22 @@ describe("MapPage", () => {
     expect(show.parentElement?.contains(screen.getByRole("search"))).toBe(true);
     expect(screen.getByRole("search").contains(show)).toBe(false);
     expect(screen.queryByRole("complementary", { name: "Herramientas del mapa" })).toBeNull();
+  });
+
+  it("en /mapa hay exactamente un main", () => {
+    const { container } = render(
+      <MemoryRouter initialEntries={["/mapa"]}>
+        <Routes>
+          <Route element={<AppShell />}>
+            <Route path="mapa" element={<MapPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    const mains = container.querySelectorAll("main");
+    expect(mains).toHaveLength(1);
+    expect(mains[0]?.classList.contains("app-main")).toBe(true);
+    expect(mains[0]?.querySelector(".map-page")).toBeTruthy();
   });
 });
